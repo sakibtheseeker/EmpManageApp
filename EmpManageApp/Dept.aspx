@@ -1,0 +1,138 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Dept.aspx.cs" Inherits="EmpManageApp.Dept" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Department</title>
+
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" />
+</head>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+
+<body>
+<form id="form1" runat="server">
+
+    <div class="container mt-3">
+        <h4>Department</h4>
+
+        <br /><br />
+
+
+        <asp:GridView ID="GridView1" runat="server"
+    CssClass="table table-bordered"
+    AutoGenerateColumns="false"
+    DataKeyNames="deptid"
+
+    OnRowEditing="GridView1_RowEditing"
+    OnRowUpdating="GridView1_RowUpdating"
+    OnRowCancelingEdit="GridView1_RowCancelingEdit"
+    OnRowDeleting="GridView1_RowDeleting" OnSelectedIndexChanged="GridView1_SelectedIndexChanged">
+
+    <Columns>
+
+        <asp:BoundField DataField="deptid"
+            HeaderText="ID" ReadOnly="true" />
+
+        <asp:BoundField DataField="deptName"
+            HeaderText="Department Name" />
+
+        <asp:BoundField DataField="deptstatus"
+            HeaderText="Status" />
+
+   
+        <asp:TemplateField HeaderText="Action">
+            <ItemTemplate>
+                <asp:LinkButton runat="server"
+                    CommandName="Edit"
+                    CssClass="btn btn-sm btn-warning mr-1">
+                    Edit
+                </asp:LinkButton>
+
+                <asp:LinkButton runat="server"
+                    CommandName="Delete"
+                    CssClass="btn btn-sm btn-danger"
+                    OnClientClick="return confirm('Delete this department?');">
+                    Delete
+                </asp:LinkButton>
+            </ItemTemplate>
+
+            <EditItemTemplate>
+                <asp:LinkButton runat="server"
+                    CommandName="Update"
+                    CssClass="btn btn-sm btn-success mr-1">
+                    Update
+                </asp:LinkButton>
+
+                <asp:LinkButton runat="server"
+                    CommandName="Cancel"
+                    CssClass="btn btn-sm btn-secondary">
+                    Cancel
+                </asp:LinkButton>
+            </EditItemTemplate>
+        </asp:TemplateField>
+
+    </Columns>
+</asp:GridView>
+
+         <button type="button" class="btn btn-primary"
+     data-toggle="modal" data-target="#deptModal">
+     Add Department
+ </button>
+        
+    </div>
+
+    <!--  MODAL -->
+    <div class="modal fade" id="deptModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Add Department</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Department Name</label>
+                        <asp:TextBox ID="txtDeptName" runat="server"
+                            CssClass="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <asp:DropDownList ID="ddlStatus" runat="server"
+                            CssClass="form-control">
+                            <asp:ListItem>Active</asp:ListItem>
+                            <asp:ListItem>Inactive</asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+
+                    <!--  SERVER BUTTON FOR SAVE -->
+                    <asp:Button ID="btnSave" runat="server"
+                        Text="Save" CssClass="btn btn-success"
+                        OnClick="btnSave_Click" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>
