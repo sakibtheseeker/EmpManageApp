@@ -8,8 +8,90 @@
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" />
 </head>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            function handleRoleChange() {
+                var roleText = $("#<%= ddlRole.ClientID %> option:selected").text();
+
+            // ENABLE EVERYTHING FIRST
+            $("#<%= ddlDept.ClientID %>").prop("disabled", false);
+            $("#<%= ddlDesignation.ClientID %>").prop("disabled", false);
+            $("#<%= txtManager.ClientID %>").prop("disabled", false);
+
+            // RESET hidden flags
+            $("#<%= hfDeptDisabled.ClientID %>").val("0");
+            $("#<%= hfDesignationDisabled.ClientID %>").val("0");
+
+            // ===== ADMIN =====
+            if (roleText === "Admin") {
+
+                // RESET VALUES 🔥
+                $("#<%= ddlDept.ClientID %>").val("0");
+                $("#<%= ddlDesignation.ClientID %>").val("0");
+                $("#<%= txtManager.ClientID %>").val("");
+
+                // DISABLE
+                $("#<%= ddlDept.ClientID %>").prop("disabled", true);
+                $("#<%= ddlDesignation.ClientID %>").prop("disabled", true);
+                $("#<%= txtManager.ClientID %>").prop("disabled", true);
+
+                $("#<%= hfDeptDisabled.ClientID %>").val("1");
+                $("#<%= hfDesignationDisabled.ClientID %>").val("1");
+            }
+
+            // ===== MANAGER =====
+            else if (roleText === "Manager") {
+
+                // RESET VALUES 🔥
+                $("#<%= ddlDesignation.ClientID %>").val("0");
+                $("#<%= txtManager.ClientID %>").val("");
+
+                // DISABLE
+                $("#<%= ddlDesignation.ClientID %>").prop("disabled", true);
+                $("#<%= txtManager.ClientID %>").prop("disabled", true);
+
+                $("#<%= hfDesignationDisabled.ClientID %>").val("1");
+            }
+        }
+
+        // Bind event
+        $("#<%= ddlRole.ClientID %>").on("change", handleRoleChange);
+
+        // Run once (edit mode / modal open)
+        handleRoleChange();
+    });
+    </script>
+
+
+
+  <script>
+      function openAddEmpModal() {
+
+          // CLEAR hidden field (switch to INSERT mode)
+          $("#<%= hfEmpId.ClientID %>").val("");
+
+    // CLEAR all inputs
+    $("#<%= txtEmpName.ClientID %>").val("");
+    $("#<%= txtContact.ClientID %>").val("");
+    $("#<%= txtEmail.ClientID %>").val("");
+    $("#<%= txtDOJ.ClientID %>").val("");
+    $("#<%= txtDOB.ClientID %>").val("");
+    $("#<%= txtManager.ClientID %>").val("");
+
+          // RESET dropdowns
+          $("#<%= ddlRole.ClientID %>").val("0").trigger("change");
+    $("#<%= ddlDept.ClientID %>").val("0");
+    $("#<%= ddlDesignation.ClientID %>").val("0");
+    $("#<%= ddlStatus.ClientID %>").val("Active");
+
+          // SHOW modal
+          $("#deptModal").modal("show");
+      }
+  </script>
+
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -44,6 +126,13 @@
                     <a class="nav-link active" href="Emp.aspx">Employee</a>
                 </li>
 
+                 <li class="nav-item">
+                 <a class="nav-link" href="Event.aspx">Event</a>
+                 </li>
+
+                 <li class="nav-item">
+                 <a class="nav-link" href="#">Leave</a>
+                 </li>
             </ul>
         </div>
     </div>
@@ -52,6 +141,9 @@
 
 <form id="form2" runat="server">
       <asp:HiddenField ID="hfEmpId" runat="server" />
+    <asp:HiddenField ID="hfDeptDisabled" runat="server" />
+<asp:HiddenField ID="hfDesignationDisabled" runat="server" />
+
     <div class="container mt-3">
         <h4>Employee</h4>
 
@@ -100,10 +192,11 @@
 
 </asp:GridView>
 
-         <button type="button" class="btn btn-primary"
-     data-toggle="modal" data-target="#deptModal">
-     Add Emp
- </button>
+   <button type="button" class="btn btn-primary"
+        onclick="openAddEmpModal()">
+    Add Emp
+</button>
+
         
     </div>
 
@@ -111,6 +204,7 @@
     <div class="modal fade" id="deptModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
+
 
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Add Emp</h5>
@@ -149,14 +243,19 @@
     </div>
 
     <div class="form-group">
-        <label>Department</label>
-        <asp:DropDownList ID="ddlDept" runat="server" CssClass="form-control" />
-    </div>
-
-    <div class="form-group">
         <label>Role</label>
         <asp:DropDownList ID="ddlRole" runat="server" CssClass="form-control" />
     </div>
+
+    <div class="form-group">
+    <label>Department</label>
+    <asp:DropDownList 
+    ID="ddlDept"
+    runat="server"
+    CssClass="form-control"
+    AutoPostBack="true"
+    OnSelectedIndexChanged="ddlDept_SelectedIndexChanged" />
+</div>
 
     <div class="form-group">
         <label>Designation</label>
@@ -191,13 +290,12 @@
 </div>
 
 </div>
-
         </div>
     </div>
 
 </form>
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 
 </body>

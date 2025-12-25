@@ -131,7 +131,7 @@ namespace EmpManageApp
         {
             int deid = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
 
-            string q = $"exec DeleteDesignation {deid}";
+            string q = $"exec SoftDeleteDesignation {deid}";
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 SqlCommand cmd = new SqlCommand(q, con);

@@ -21,7 +21,6 @@ namespace EmpManageApp
                 LoadGrid();
                 LoadRoleDropdown();
                 LoadDeptDropdown();
-                LoadDesignationDropdown();
             }
                 
         }
@@ -75,24 +74,6 @@ namespace EmpManageApp
             ddlRole.Items.Insert(0, new ListItem("-- Select Role --", "0"));
         }
 
-        private void LoadDesignationDropdown()
-        {
-            using (SqlConnection con = new SqlConnection(connStr))
-            {
-                SqlDataAdapter da = new SqlDataAdapter("exec FetchDesignationForDropdown", con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                ddlDesignation.DataSource = dt;
-                ddlDesignation.DataTextField = "deName";
-                ddlDesignation.DataValueField = "deid";
-                ddlDesignation.DataBind();
-            }
-
-            ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
-        }
-
-
         protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
         {
             GridView1.EditIndex = e.NewEditIndex;
@@ -109,7 +90,7 @@ namespace EmpManageApp
         {
             int eid = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
 
-            string q = $"exec DeleteEmp {eid}";
+            string q = $"exec SoftDeleteEmp {eid}";
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 SqlCommand cmd = new SqlCommand(q, con);
@@ -123,25 +104,56 @@ namespace EmpManageApp
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
+            int eRole = Convert.ToInt32(ddlRole.SelectedValue);
+
+            int eDept = ddlDept.Enabled
+                ? Convert.ToInt32(ddlDept.SelectedValue)
+                : 0;
+
+            int eDesignation = ddlDesignation.Enabled
+                ? Convert.ToInt32(ddlDesignation.SelectedValue)
+                : 0;
+
+            string eManager = txtManager.Enabled
+                ? txtManager.Text.Trim()
+                : null;
+
             int eid = string.IsNullOrEmpty(hfEmpId.Value)
                       ? 0
                       : Convert.ToInt32(hfEmpId.Value);
 
+
+
             string eName = txtEmpName.Text.Trim();
             string eContact = txtContact.Text.Trim();
             string eEmail = txtEmail.Text.Trim();
-            DateTime eDOJ = Convert.ToDateTime(txtDOJ.Text);
-            DateTime eDOB = Convert.ToDateTime(txtDOB.Text);
+            DateTime eDOJ, eDOB;
 
-            int eRole = Convert.ToInt32(ddlRole.SelectedValue);
-            int eDept = Convert.ToInt32(ddlDept.SelectedValue);
-            int eDesignation = Convert.ToInt32(ddlDesignation.SelectedValue);
+            bool isDOJValid = DateTime.TryParse(txtDOJ.Text, out eDOJ);
+            bool isDOBValid = DateTime.TryParse(txtDOB.Text, out eDOB);
 
-            string eManager = txtManager.Text.Trim();
+            if (!isDOJValid || !isDOBValid)
+            {
+                // show alert or return silently
+                return;
+            }
+
+
             string eStatus = ddlStatus.SelectedValue;
 
-            if (eRole == 0 || eDept == 0 || eDesignation == 0)
+            if (eRole == 0)
                 return;
+
+            bool deptDisabled = hfDeptDisabled.Value == "1";
+            bool desigDisabled = hfDesignationDisabled.Value == "1";
+
+            if (!deptDisabled && eDept == 0)
+                return;
+
+            if (!desigDisabled && eDesignation == 0)
+                return;
+
+
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
@@ -160,6 +172,26 @@ namespace EmpManageApp
                 }
 
                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue(
+                    "@eDept",
+                    ddlDept.Enabled && ddlDept.SelectedValue != "0"
+                        ? (object)ddlDept.SelectedValue
+                        : DBNull.Value
+                );
+
+                cmd.Parameters.AddWithValue(
+                    "@eDesignation",
+                    ddlDesignation.Enabled && ddlDesignation.SelectedValue != "0"
+                        ? (object)ddlDesignation.SelectedValue
+                        : DBNull.Value
+                );
+
+                cmd.Parameters.AddWithValue(
+                    "@eManager",
+                    txtManager.Enabled && !string.IsNullOrWhiteSpace(txtManager.Text)
+                        ? (object)txtManager.Text.Trim()
+                        : DBNull.Value
+                );
 
                 cmd.Parameters.AddWithValue("@eName", eName);
                 cmd.Parameters.AddWithValue("@eContact", eContact);
@@ -167,14 +199,15 @@ namespace EmpManageApp
                 cmd.Parameters.AddWithValue("@eDOJ", eDOJ);
                 cmd.Parameters.AddWithValue("@eDOB", eDOB);
                 cmd.Parameters.AddWithValue("@eRole", eRole);
-                cmd.Parameters.AddWithValue("@eDept", eDept);
-                cmd.Parameters.AddWithValue("@eDesignation", eDesignation);
-                cmd.Parameters.AddWithValue("@eManager", eManager);
                 cmd.Parameters.AddWithValue("@eStatus", eStatus);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
+
+            int eDept1 = ddlDept.Enabled ? Convert.ToInt32(ddlDept.SelectedValue) : 0;
+            int eDesignation1 = ddlDesignation.Enabled ? Convert.ToInt32(ddlDesignation.SelectedValue) : 0;
+            string eManager1 = txtManager.Enabled ? txtManager.Text : null;
 
             // reset
             hfEmpId.Value = "";
@@ -193,6 +226,14 @@ namespace EmpManageApp
             // TODO: Load employee data into modal
             LoadEmployeeForEdit(eid);
 
+            ScriptManager.RegisterStartupScript(
+                this,
+                GetType(),
+                "roleChange",
+                "$('#" + ddlRole.ClientID + "').trigger('change');",
+                true
+            );
+
             // show modal
             ScriptManager.RegisterStartupScript(
                 this, GetType(),
@@ -200,10 +241,51 @@ namespace EmpManageApp
                 "$('#deptModal').modal('show');",
                 true);
         }
+        protected void ddlDept_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int deptId = Convert.ToInt32(ddlDept.SelectedValue);
+
+            ddlDesignation.Items.Clear();
+
+            if (deptId == 0)
+            {
+                ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
+            }
+            else
+            {
+                using (SqlConnection con = new SqlConnection(connStr))
+                {
+                    SqlCommand cmd = new SqlCommand("FetchDesignationByDept", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@deptid", deptId);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    ddlDesignation.DataSource = dt;
+                    ddlDesignation.DataTextField = "deName";
+                    ddlDesignation.DataValueField = "deid";
+                    ddlDesignation.DataBind();
+                }
+
+                ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
+            }
+
+            // 🔥 KEEP MODAL OPEN AFTER POSTBACK
+            ScriptManager.RegisterStartupScript(
+                this,
+                GetType(),
+                "ShowModalAfterDeptChange",
+                "$('#deptModal').modal('show');",
+                true
+            );
+        }
+
 
         private void LoadEmployeeForEdit(int eid)
         {
-            string q = "SELECT * FROM Emp WHERE eid = @eid";
+            string q = "SELECT * FROM Emp WHERE eid = @eid AND isActive = 1";
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
@@ -223,9 +305,60 @@ namespace EmpManageApp
                     txtManager.Text = dr["eManager"].ToString();
                     ddlStatus.SelectedValue = dr["eStatus"].ToString();
 
-                    ddlRole.SelectedValue = dr["eRole"].ToString();
-                    ddlDept.SelectedValue = dr["eDept"].ToString();
-                    ddlDesignation.SelectedValue = dr["eDesignation"].ToString();
+                    // ===== ROLE =====
+                    string roleVal = dr["eRole"].ToString();
+                    if (ddlRole.Items.FindByValue(roleVal) != null)
+                    {
+                        ddlRole.SelectedValue = roleVal;
+                    }
+                    else
+                    {
+                        ddlRole.SelectedIndex = 0; // "-- Select Role --"
+                    }
+
+
+                    // ===== DEPARTMENT =====
+                    if (dr["eDept"] != DBNull.Value)
+                    {
+                        string deptVal = dr["eDept"].ToString();
+
+                        if (ddlDept.Items.FindByValue(deptVal) != null)
+                        {
+                            ddlDept.SelectedValue = deptVal;
+
+                            // 🔥 IMPORTANT: load designations for this department
+                            ddlDept_SelectedIndexChanged(null, null);
+                        }
+                    }
+                    else
+                    {
+                        ddlDept.SelectedIndex = 0;
+                    }
+
+
+                    // ===== DESIGNATION =====
+                    if (dr["eDesignation"] != DBNull.Value)
+                    {
+                        string desigVal = dr["eDesignation"].ToString();
+
+                        if (ddlDesignation.Items.FindByValue(desigVal) != null)
+                        {
+                            ddlDesignation.SelectedValue = desigVal;
+                        }
+                    }
+                    else
+                    {
+                        ddlDesignation.SelectedIndex = 0;
+                    }
+
+
+
+                    // ===== MANAGER =====
+                    txtManager.Text = dr["eManager"] == DBNull.Value
+                        ? ""
+                        : dr["eManager"].ToString();
+
+                   
                 }
             }
         }
@@ -265,8 +398,7 @@ namespace EmpManageApp
             ddlStatus.SelectedIndex = 0;
         }
 
-
-
+     
         protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
             GridViewRow row = GridView1.Rows[e.RowIndex];
@@ -289,15 +421,15 @@ namespace EmpManageApp
 
 
             string q = $@"
-        exec UpdateEmp
-        {eid},
-        '{eName}','{eContact}','{eEmail}',
-        '{eDOJ}','{eDOB}',
-        {ddlRole.SelectedValue},
-        {ddlDept.SelectedValue},
-        {ddlDesignation.SelectedValue},
-        '{eManager}','{eStatus}'
-    ";
+            exec UpdateEmp
+            {eid},
+            '{eName}','{eContact}','{eEmail}',
+            '{eDOJ}','{eDOB}',
+            {ddlRole.SelectedValue},
+            {ddlDept.SelectedValue},
+            {ddlDesignation.SelectedValue},
+            '{eManager}','{eStatus}'
+            ";
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
@@ -312,3 +444,4 @@ namespace EmpManageApp
 
     }
 }
+

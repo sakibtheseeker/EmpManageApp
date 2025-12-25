@@ -70,6 +70,7 @@
     <Content Include="Dept.aspx" />
     <Content Include="Designation.aspx" />
     <Content Include="Emp.aspx" />
+    <Content Include="Event.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Role.aspx" />
     <Content Include="Web.config" />
@@ -95,6 +96,13 @@
     </Compile>
     <Compile Include="Emp.aspx.designer.cs">
       <DependentUpon>Emp.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Event.aspx.cs">
+      <DependentUpon>Event.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Event.aspx.designer.cs">
+      <DependentUpon>Event.aspx</DependentUpon>
     </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>

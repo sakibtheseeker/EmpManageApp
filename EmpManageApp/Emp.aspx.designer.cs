@@ -33,6 +33,24 @@ namespace EmpManageApp
         protected global::System.Web.UI.WebControls.HiddenField hfEmpId;
 
         /// <summary>
+        /// hfDeptDisabled control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfDeptDisabled;
+
+        /// <summary>
+        /// hfDesignationDisabled control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfDesignationDisabled;
+
+        /// <summary>
         /// GridView1 control.
         /// </summary>
         /// <remarks>
@@ -87,15 +105,6 @@ namespace EmpManageApp
         protected global::System.Web.UI.WebControls.TextBox txtDOB;
 
         /// <summary>
-        /// ddlDept control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDept;
-
-        /// <summary>
         /// ddlRole control.
         /// </summary>
         /// <remarks>
@@ -103,6 +112,15 @@ namespace EmpManageApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlRole;
+
+        /// <summary>
+        /// ddlDept control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlDept;
 
         /// <summary>
         /// ddlDesignation control.

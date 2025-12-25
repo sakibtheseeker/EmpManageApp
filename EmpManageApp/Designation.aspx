@@ -46,6 +46,14 @@
                     <a class="nav-link" href="Emp.aspx">Employee</a>
                 </li>
 
+                 <li class="nav-item">
+                 <a class="nav-link" href="Event.aspx">Event</a>
+                 </li>
+
+                 <li class="nav-item">
+                 <a class="nav-link" href="#">Leave</a>
+                 </li>
+
             </ul>
         </div>
     </div>
