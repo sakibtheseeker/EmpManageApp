@@ -14,6 +14,42 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 
 <body>
+          <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="Emp.aspx">EmpManage</a>
+
+        <button class="navbar-toggler" type="button"
+                data-toggle="collapse"
+                data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="Dept.aspx">Department</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="Designation.aspx">Designation</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link " href="Role.aspx">Role</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="Emp.aspx">Employee</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
 <form id="form2" runat="server">
 
     <div class="container mt-3">
