@@ -45,13 +45,25 @@
                     <a class="nav-link" href="Emp.aspx">Employee</a>
                 </li>
 
-                 <li class="nav-item">
-                 <a class="nav-link" href="Event.aspx">Event</a>
-                 </li>
+             <li class="nav-item dropdown">
+             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               Event
+             </a>
+             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+               <a class="dropdown-item" href="EventType.aspx">Event Type</a>
+               <a class="dropdown-item" href="EventCalender.aspx">Event Calender</a>
+                 </div>
+              </li>
 
-                 <li class="nav-item">
-                 <a class="nav-link" href="#">Leave</a>
-                 </li>
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Leave
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="LeaveType.aspx">Leave Type</a>
+                      <a class="dropdown-item" href="AddLeave.aspx">Add Leave</a>
+                        </div>
+                     </li>
 
             </ul>
         </div>

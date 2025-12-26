@@ -67,15 +67,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AddLeave.aspx" />
     <Content Include="Dept.aspx" />
     <Content Include="Designation.aspx" />
     <Content Include="Emp.aspx" />
-    <Content Include="Event.aspx" />
+    <Content Include="EventCalender.aspx" />
+    <Content Include="EventType.aspx" />
+    <Content Include="LeaveType.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Role.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddLeave.aspx.cs">
+      <DependentUpon>AddLeave.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AddLeave.aspx.designer.cs">
+      <DependentUpon>AddLeave.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Dept.aspx.cs">
       <DependentUpon>Dept.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -97,12 +107,26 @@
     <Compile Include="Emp.aspx.designer.cs">
       <DependentUpon>Emp.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Event.aspx.cs">
-      <DependentUpon>Event.aspx</DependentUpon>
+    <Compile Include="EventCalender.aspx.cs">
+      <DependentUpon>EventCalender.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Event.aspx.designer.cs">
-      <DependentUpon>Event.aspx</DependentUpon>
+    <Compile Include="EventCalender.aspx.designer.cs">
+      <DependentUpon>EventCalender.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EventType.aspx.cs">
+      <DependentUpon>EventType.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EventType.aspx.designer.cs">
+      <DependentUpon>EventType.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LeaveType.aspx.cs">
+      <DependentUpon>LeaveType.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LeaveType.aspx.designer.cs">
+      <DependentUpon>LeaveType.aspx</DependentUpon>
     </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>

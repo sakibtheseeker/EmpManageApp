@@ -109,11 +109,11 @@ namespace EmpManageApp
         protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
             GridViewRow row = GridView1.Rows[e.RowIndex];
-            int deptid = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
+            int deid = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
             string deName = ((TextBox)row.Cells[1].Controls[0]).Text.Replace("'", "''");
             string destatus = ((TextBox)row.Cells[2].Controls[0]).Text;
 
-            string q = $" exec UpdateDesignation {deptid}, '{deName}' ,'{destatus}'";
+            string q = $" exec UpdateDesignation {deid}, '{deName}' ,'{destatus}'";
 
             using (SqlConnection con = new SqlConnection(connStr))
             {

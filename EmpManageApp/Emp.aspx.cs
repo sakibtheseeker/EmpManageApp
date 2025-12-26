@@ -217,6 +217,8 @@ namespace EmpManageApp
 
         protected void btnEdit_Click(object sender, EventArgs e)
         {
+         
+
             LinkButton btn = (LinkButton)sender;
             int eid = Convert.ToInt32(btn.CommandArgument);
 
@@ -245,34 +247,9 @@ namespace EmpManageApp
         {
             int deptId = Convert.ToInt32(ddlDept.SelectedValue);
 
-            ddlDesignation.Items.Clear();
+            LoadDesignationByDept(deptId);
 
-            if (deptId == 0)
-            {
-                ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
-            }
-            else
-            {
-                using (SqlConnection con = new SqlConnection(connStr))
-                {
-                    SqlCommand cmd = new SqlCommand("FetchDesignationByDept", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@deptid", deptId);
-
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    ddlDesignation.DataSource = dt;
-                    ddlDesignation.DataTextField = "deName";
-                    ddlDesignation.DataValueField = "deid";
-                    ddlDesignation.DataBind();
-                }
-
-                ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
-            }
-
-            // 🔥 KEEP MODAL OPEN AFTER POSTBACK
+            // KEEP MODAL OPEN
             ScriptManager.RegisterStartupScript(
                 this,
                 GetType(),
@@ -281,6 +258,7 @@ namespace EmpManageApp
                 true
             );
         }
+
 
 
         private void LoadEmployeeForEdit(int eid)
@@ -327,7 +305,8 @@ namespace EmpManageApp
                             ddlDept.SelectedValue = deptVal;
 
                             // 🔥 IMPORTANT: load designations for this department
-                            ddlDept_SelectedIndexChanged(null, null);
+                            LoadDesignationByDept(Convert.ToInt32(deptVal));
+
                         }
                     }
                     else
@@ -441,6 +420,36 @@ namespace EmpManageApp
             GridView1.EditIndex = -1;
             LoadGrid();
         }
+
+        private void LoadDesignationByDept(int deptId)
+        {
+            ddlDesignation.Items.Clear();
+
+            if (deptId == 0)
+            {
+                ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
+                return;
+            }
+
+            using (SqlConnection con = new SqlConnection(connStr))
+            {
+                SqlCommand cmd = new SqlCommand("FetchDesignationByDept", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@deptid", deptId);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                ddlDesignation.DataSource = dt;
+                ddlDesignation.DataTextField = "deName";
+                ddlDesignation.DataValueField = "deid";
+                ddlDesignation.DataBind();
+            }
+
+            ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
+        }
+
 
     }
 }

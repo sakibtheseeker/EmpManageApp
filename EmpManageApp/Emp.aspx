@@ -5,11 +5,21 @@
     <title>Role</title>
 
     <!-- Bootstrap CSS -->
+
     <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" />
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" />
+
+    <!-- ✅ jQuery FIRST -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <!-- ✅ Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 </head>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+
+
     <script>
         $(document).ready(function () {
 
@@ -60,8 +70,7 @@
         // Bind event
         $("#<%= ddlRole.ClientID %>").on("change", handleRoleChange);
 
-        // Run once (edit mode / modal open)
-        handleRoleChange();
+
     });
     </script>
 
@@ -91,6 +100,12 @@
           $("#deptModal").modal("show");
       }
   </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 
 
 <body>
@@ -126,12 +141,24 @@
                     <a class="nav-link active" href="Emp.aspx">Employee</a>
                 </li>
 
-                 <li class="nav-item">
-                 <a class="nav-link" href="Event.aspx">Event</a>
-                 </li>
+              <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Event
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="EventType.aspx">Event Type</a>
+                <a class="dropdown-item" href="EventCalender.aspx">Event Calender</a>
+                  </div>
+                </li>
 
-                 <li class="nav-item">
-                 <a class="nav-link" href="#">Leave</a>
+                 <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Leave
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="LeaveType.aspx">Leave Type</a>
+                  <a class="dropdown-item" href="AddLeave.aspx">Add Leave</a>
+                    </div>
                  </li>
             </ul>
         </div>
@@ -140,6 +167,7 @@
 
 
 <form id="form2" runat="server">
+     <asp:ScriptManager ID="ScriptManager1" runat="server" />
       <asp:HiddenField ID="hfEmpId" runat="server" />
     <asp:HiddenField ID="hfDeptDisabled" runat="server" />
 <asp:HiddenField ID="hfDesignationDisabled" runat="server" />
@@ -176,7 +204,11 @@
             <asp:LinkButton runat="server"
                 Text="Edit"
                 CssClass="btn btn-sm btn-warning mr-1"
+                
                 CommandArgument='<%# Eval("eid") %>'
+                CausesValidation="false"
+UseSubmitBehavior="false"
+
                 OnClick="btnEdit_Click" />
 
             <asp:LinkButton runat="server"
@@ -184,6 +216,9 @@
                 CssClass="btn btn-sm btn-danger"
                 CommandArgument='<%# Eval("eid") %>'
                 OnClick="btnDelete_Click"
+                CausesValidation="false"
+UseSubmitBehavior="false"
+
                 OnClientClick="return confirm('Delete this employee?');" />
         </ItemTemplate>
     </asp:TemplateField>
@@ -295,7 +330,7 @@
 
 </form>
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 
 </body>
