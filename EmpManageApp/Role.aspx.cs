@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -15,6 +16,10 @@ namespace EmpManageApp
         string connStr = ConfigurationManager.ConnectionStrings["empmanage"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["username"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
             if (!IsPostBack)
             {
                 LoadGrid();
@@ -68,23 +73,38 @@ namespace EmpManageApp
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            // Read values from UI
             string rName = txtRole.Text.Replace("'", "''");
             string rstatus = ddlStatus.SelectedValue;
-
-            string q = $"exec InsertRole '{rName}','{rstatus}'";
+            int count;
+            string q = $"select * from Role where rname='{rName}'";
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 SqlCommand cmd = new SqlCommand(q, con);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
+                count = Convert.ToInt32(cmd.ExecuteScalar());
             }
 
-            // Refresh GridView
-            LoadGrid();
+            if (count<=0)
+            {
+                string qu = $"exec InsertRole '{rName}','{rstatus}'";
+                using (SqlConnection con = new SqlConnection(connStr))
+                {
+                    SqlCommand cmd = new SqlCommand(qu, con);
 
-            // Clear inputs
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            else
+            {
+                Response.Write("Duplicate role inserted");
+            }
+
+                LoadGrid();
+
+       
          
             txtRole.Text = "";
             ddlStatus.SelectedIndex = 0;

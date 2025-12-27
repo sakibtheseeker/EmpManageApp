@@ -26,19 +26,19 @@
             function handleRoleChange() {
                 var roleText = $("#<%= ddlRole.ClientID %> option:selected").text();
 
-            // ENABLE EVERYTHING FIRST
+        
             $("#<%= ddlDept.ClientID %>").prop("disabled", false);
             $("#<%= ddlDesignation.ClientID %>").prop("disabled", false);
             $("#<%= txtManager.ClientID %>").prop("disabled", false);
 
-            // RESET hidden flags
+ 
             $("#<%= hfDeptDisabled.ClientID %>").val("0");
             $("#<%= hfDesignationDisabled.ClientID %>").val("0");
 
-            // ===== ADMIN =====
+       
             if (roleText === "Admin") {
 
-                // RESET VALUES 🔥
+            
                 $("#<%= ddlDept.ClientID %>").val("0");
                 $("#<%= ddlDesignation.ClientID %>").val("0");
                 $("#<%= txtManager.ClientID %>").val("");
@@ -55,11 +55,11 @@
             // ===== MANAGER =====
             else if (roleText === "Manager") {
 
-                // RESET VALUES 🔥
+          
                 $("#<%= ddlDesignation.ClientID %>").val("0");
                 $("#<%= txtManager.ClientID %>").val("");
 
-                // DISABLE
+
                 $("#<%= ddlDesignation.ClientID %>").prop("disabled", true);
                 $("#<%= txtManager.ClientID %>").prop("disabled", true);
 
@@ -67,7 +67,6 @@
             }
         }
 
-        // Bind event
         $("#<%= ddlRole.ClientID %>").on("change", handleRoleChange);
 
 
@@ -79,10 +78,10 @@
   <script>
       function openAddEmpModal() {
 
-          // CLEAR hidden field (switch to INSERT mode)
+         
           $("#<%= hfEmpId.ClientID %>").val("");
 
-    // CLEAR all inputs
+    
     $("#<%= txtEmpName.ClientID %>").val("");
     $("#<%= txtContact.ClientID %>").val("");
     $("#<%= txtEmail.ClientID %>").val("");
@@ -90,13 +89,11 @@
     $("#<%= txtDOB.ClientID %>").val("");
     $("#<%= txtManager.ClientID %>").val("");
 
-          // RESET dropdowns
           $("#<%= ddlRole.ClientID %>").val("0").trigger("change");
     $("#<%= ddlDept.ClientID %>").val("0");
     $("#<%= ddlDesignation.ClientID %>").val("0");
     $("#<%= ddlStatus.ClientID %>").val("Active");
 
-          // SHOW modal
           $("#deptModal").modal("show");
       }
   </script>
@@ -158,6 +155,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" href="LeaveType.aspx">Leave Type</a>
                   <a class="dropdown-item" href="AddLeave.aspx">Add Leave</a>
+                  <a class="dropdown-item" href="ApplyLeave.aspx">Apply Leave</a>
                     </div>
                  </li>
             </ul>
@@ -175,7 +173,7 @@
     <div class="container mt-3">
         <h4>Employee</h4>
 
-        <!-- ✅ HTML BUTTON (NO POSTBACK) -->
+    
        
 
         <br /><br />

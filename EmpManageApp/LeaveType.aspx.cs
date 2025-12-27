@@ -16,6 +16,11 @@ namespace EmpManageApp
             ConfigurationManager.ConnectionStrings["empmanage"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
+            if(Session["empId"] == null)
+{
+                Response.Redirect("Login.aspx");
+            }
+
             if (!IsPostBack)
             {
                 LoadGrid();

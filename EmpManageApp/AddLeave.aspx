@@ -61,6 +61,7 @@
                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                      <a class="dropdown-item" href="LeaveType.aspx">Leave Type</a>
                      <a class="dropdown-item" href="AddLeave.aspx">Add Leave</a>
+                      <a class="dropdown-item" href="ApplyLeave.aspx">Apply Leave</a>
                        </div>
                     </li>
 

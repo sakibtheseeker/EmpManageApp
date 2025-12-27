@@ -106,6 +106,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" href="LeaveType.aspx">Leave Type</a>
                   <a class="dropdown-item" href="AddLeave.aspx">Add Leave</a>
+                       <a class="dropdown-item" href="ApplyLeave.aspx">Apply Leave</a>
                     </div>
                  </li>
             </ul>
@@ -117,7 +118,7 @@
 <div class="container-fluid mt-4">
     <div class="row">
 
-        <!-- LEFT SIDE : EVENT FORM -->
+     
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header bg-primary text-white">
@@ -158,7 +159,7 @@
             </div>
         </div>
 
-        <!-- RIGHT SIDE : CALENDAR -->
+      
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header bg-dark text-white">

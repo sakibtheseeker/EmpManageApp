@@ -13,6 +13,11 @@ namespace EmpManageApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["empId"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
+
             if (!IsPostBack)
             {
                 LoadGrid();
@@ -70,47 +75,35 @@ namespace EmpManageApp
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            int id = string.IsNullOrEmpty(hfDeptLeaveId.Value)
-                ? 0
-                : Convert.ToInt32(hfDeptLeaveId.Value);
-
+            int newLeaves = Convert.ToInt32(txtTotalLeaves.Text);
+            int deptLeaveId = string.IsNullOrEmpty(hfDeptLeaveId.Value)
+       ? 0
+       : Convert.ToInt32(hfDeptLeaveId.Value);
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                SqlCommand cmd;
-
-                if (id == 0)
-                {
-                    cmd = new SqlCommand("InsertDeptLeave", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                }
-                else
-                {
-                    cmd = new SqlCommand(
-                        "UPDATE DeptLeave SET deptId=@deptId, leaveTypeId=@leaveTypeId, totalLeaves=@totalLeaves WHERE deptLeaveId=@id",
-                        con);
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddWithValue("@id", id);
-                }
-
+                SqlCommand cmd = new SqlCommand("LeaveTypeValidation", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@deptLeaveId", deptLeaveId);
                 cmd.Parameters.AddWithValue("@deptId", ddlDept.SelectedValue);
                 cmd.Parameters.AddWithValue("@leaveTypeId", ddlLeaveType.SelectedValue);
-                cmd.Parameters.AddWithValue("@totalLeaves", txtTotalLeaves.Text);
+                cmd.Parameters.AddWithValue("@newLeaves", newLeaves);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
 
-            hfDeptLeaveId.Value = "";
             txtTotalLeaves.Text = "";
+            hfDeptLeaveId.Value = "";
 
             LoadGrid();
 
             ScriptManager.RegisterStartupScript(
                 this, GetType(),
-                "hideModal",
-                "$('#leaveModal').modal('hide'); alert('Leave saved successfully');",
+                "success",
+                "$('#leaveModal').modal('hide'); alert('Leaves updated successfully');",
                 true);
         }
+
 
         protected void btnEdit_Click(object sender, EventArgs e)
         {

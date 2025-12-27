@@ -16,6 +16,10 @@ namespace EmpManageApp
         private DataTable calendarEvents;
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["username"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
             if (!IsPostBack)
             {
                 LoadEventTypes();
@@ -34,7 +38,6 @@ namespace EmpManageApp
                 da.Fill(calendarEvents);
             }
 
-            // STORE in ViewState so Calendar can access it
             ViewState["CalendarEvents"] = calendarEvents;
         }
         protected void Calendar1_DayRender(object sender, DayRenderEventArgs e)
@@ -46,7 +49,6 @@ namespace EmpManageApp
 
             DateTime cellDate = e.Day.Date;
 
-            // Match events for this date
             DataRow[] events = dt.Select(
                 $"eventDate = #{cellDate:MM/dd/yyyy}#"
             );
@@ -115,7 +117,7 @@ namespace EmpManageApp
             }
             LoadCalendarEvents();
 
-            // After successful insert
+     
             ScriptManager.RegisterStartupScript(
                 this,
                 GetType(),
@@ -126,14 +128,13 @@ namespace EmpManageApp
 
         }
 
-        // When user clicks date on calendar
         protected void Calendar1_SelectionChanged(object sender, EventArgs e)
         {
             txtEventDate.Text =
                 Calendar1.SelectedDate.ToString("yyyy-MM-dd");
         }
 
-        // Highlight days which have events (we'll improve this later)
+       
      
     }
 }

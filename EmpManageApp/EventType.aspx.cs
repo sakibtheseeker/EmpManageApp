@@ -13,10 +13,16 @@ namespace EmpManageApp
 {
     public partial class EventType : System.Web.UI.Page
     {
+
         string connStr = ConfigurationManager.ConnectionStrings["empmanage"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["username"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
+
             if (!IsPostBack)
             {
                 LoadGrid();
@@ -53,12 +59,12 @@ namespace EmpManageApp
 
                 if (eventTypeId == 0)
                 {
-                    // INSERT
+               
                     cmd = new SqlCommand("InsertEventType", con);
                 }
                 else
                 {
-                    // UPDATE
+             
                     cmd = new SqlCommand("UpdateEventType", con);
                     cmd.Parameters.AddWithValue("@eventTypeId", eventTypeId);
                 }
@@ -72,7 +78,6 @@ namespace EmpManageApp
                 cmd.ExecuteNonQuery();
             }
 
-            // RESET
             hfEventTypeId.Value = "";
             txtEventType.Text = "";
             txtColor.Text = "#000000";
@@ -122,7 +127,7 @@ namespace EmpManageApp
                 }
             }
 
-            // OPEN MODAL
+      
             ScriptManager.RegisterStartupScript(
                 this,
                 GetType(),

@@ -16,6 +16,10 @@ namespace EmpManageApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["username"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
             if (!IsPostBack)
             {
                 LoadGrid();
@@ -110,9 +114,13 @@ namespace EmpManageApp
                 ? Convert.ToInt32(ddlDept.SelectedValue)
                 : 0;
 
-            int eDesignation = ddlDesignation.Enabled
-                ? Convert.ToInt32(ddlDesignation.SelectedValue)
-                : 0;
+            int eDesignation = 0;
+
+            if (ddlDesignation.Enabled && int.TryParse(ddlDesignation.SelectedValue, out int desig))
+            {
+                eDesignation = desig;
+            }
+
 
             string eManager = txtManager.Enabled
                 ? txtManager.Text.Trim()
@@ -134,7 +142,7 @@ namespace EmpManageApp
 
             if (!isDOJValid || !isDOBValid)
             {
-                // show alert or return silently
+               
                 return;
             }
 
@@ -161,27 +169,31 @@ namespace EmpManageApp
 
                 if (eid == 0)
                 {
-                    // INSERT
+                 
                     cmd = new SqlCommand("InsertEmp", con);
                 }
                 else
                 {
-                    // UPDATE
+           
                     cmd = new SqlCommand("UpdateEmp", con);
                     cmd.Parameters.AddWithValue("@eid", eid);
                 }
 
-                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue(
-                    "@eDept",
-                    ddlDept.Enabled && ddlDept.SelectedValue != "0"
-                        ? (object)ddlDept.SelectedValue
-                        : DBNull.Value
-                );
+                     "@eDept",
+                     ddlDept.Enabled
+                     && ddlDept.SelectedValue != "0"
+                     && int.TryParse(ddlDept.SelectedValue, out _)
+                         ? (object)ddlDept.SelectedValue
+                         : DBNull.Value
+                 );
+
 
                 cmd.Parameters.AddWithValue(
                     "@eDesignation",
-                    ddlDesignation.Enabled && ddlDesignation.SelectedValue != "0"
+                    ddlDesignation.Enabled
+                    && ddlDesignation.SelectedValue != "0"
+                    && int.TryParse(ddlDesignation.SelectedValue, out _)
                         ? (object)ddlDesignation.SelectedValue
                         : DBNull.Value
                 );
@@ -192,6 +204,7 @@ namespace EmpManageApp
                         ? (object)txtManager.Text.Trim()
                         : DBNull.Value
                 );
+                cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@eName", eName);
                 cmd.Parameters.AddWithValue("@eContact", eContact);
@@ -206,10 +219,17 @@ namespace EmpManageApp
             }
 
             int eDept1 = ddlDept.Enabled ? Convert.ToInt32(ddlDept.SelectedValue) : 0;
-            int eDesignation1 = ddlDesignation.Enabled ? Convert.ToInt32(ddlDesignation.SelectedValue) : 0;
+            int eDesignation1 = 0;
+
+            if (ddlDesignation.Enabled &&
+                ddlDesignation.SelectedValue != "0" &&
+                !string.IsNullOrEmpty(ddlDesignation.SelectedValue))
+            {
+                eDesignation1 = Convert.ToInt32(ddlDesignation.SelectedValue);
+            }
             string eManager1 = txtManager.Enabled ? txtManager.Text : null;
 
-            // reset
+  
             hfEmpId.Value = "";
             LoadGrid();
             ClearForm();
@@ -222,10 +242,9 @@ namespace EmpManageApp
             LinkButton btn = (LinkButton)sender;
             int eid = Convert.ToInt32(btn.CommandArgument);
 
-            // store eid for update
             hfEmpId.Value = eid.ToString();
 
-            // TODO: Load employee data into modal
+         
             LoadEmployeeForEdit(eid);
 
             ScriptManager.RegisterStartupScript(
@@ -236,7 +255,6 @@ namespace EmpManageApp
                 true
             );
 
-            // show modal
             ScriptManager.RegisterStartupScript(
                 this, GetType(),
                 "ShowModal",
@@ -249,7 +267,7 @@ namespace EmpManageApp
 
             LoadDesignationByDept(deptId);
 
-            // KEEP MODAL OPEN
+       
             ScriptManager.RegisterStartupScript(
                 this,
                 GetType(),
@@ -291,7 +309,7 @@ namespace EmpManageApp
                     }
                     else
                     {
-                        ddlRole.SelectedIndex = 0; // "-- Select Role --"
+                        ddlRole.SelectedIndex = 0; 
                     }
 
 
@@ -304,7 +322,7 @@ namespace EmpManageApp
                         {
                             ddlDept.SelectedValue = deptVal;
 
-                            // 🔥 IMPORTANT: load designations for this department
+                          
                             LoadDesignationByDept(Convert.ToInt32(deptVal));
 
                         }
@@ -358,7 +376,7 @@ namespace EmpManageApp
                 cmd.ExecuteNonQuery();
             }
 
-            // Refresh grid
+      
             LoadGrid();
         }
 

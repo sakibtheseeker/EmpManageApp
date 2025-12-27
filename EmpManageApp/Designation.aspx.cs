@@ -18,6 +18,10 @@ namespace EmpManageApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["username"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
             if (!IsPostBack)
             {
                 LoadGrid();
@@ -61,15 +65,14 @@ namespace EmpManageApp
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            // Read values from UI
         int deptid = Convert.ToInt32(ddlDept.SelectedValue);
         string deName = txtDesignation.Text.Replace("'", "''");
         string destatus = ddlStatus.SelectedValue;
 
-    // Validation
+
     if (deptid == 0 || string.IsNullOrWhiteSpace(deName))
     {
-        // optional: show message
+       
         return;
     }
 
@@ -82,10 +85,9 @@ namespace EmpManageApp
                 cmd.ExecuteNonQuery();
             }
 
-            // Refresh GridView
             LoadGrid();
 
-            // Clear inputs
+       
             ddlDept.SelectedIndex = 0;
             txtDesignation.Text = "";
             ddlStatus.SelectedIndex = 0;
