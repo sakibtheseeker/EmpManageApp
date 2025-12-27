@@ -26,52 +26,46 @@
             function handleRoleChange() {
                 var roleText = $("#<%= ddlRole.ClientID %> option:selected").text();
 
-        
-            $("#<%= ddlDept.ClientID %>").prop("disabled", false);
-            $("#<%= ddlDesignation.ClientID %>").prop("disabled", false);
-            $("#<%= txtManager.ClientID %>").prop("disabled", false);
+        // ENABLE ALL FIRST
+        $("#<%= ddlDept.ClientID %>").prop("disabled", false);
+        $("#<%= ddlDesignation.ClientID %>").prop("disabled", false);
+        $("#<%= ddlManager.ClientID %>").prop("disabled", false);
 
- 
-            $("#<%= hfDeptDisabled.ClientID %>").val("0");
-            $("#<%= hfDesignationDisabled.ClientID %>").val("0");
+        $("#<%= hfDeptDisabled.ClientID %>").val("0");
+        $("#<%= hfDesignationDisabled.ClientID %>").val("0");
 
-       
-            if (roleText === "Admin") {
+        // ===== ADMIN =====
+        if (roleText === "Admin") {
 
-            
-                $("#<%= ddlDept.ClientID %>").val("0");
-                $("#<%= ddlDesignation.ClientID %>").val("0");
-                $("#<%= txtManager.ClientID %>").val("");
+            $("#<%= ddlDept.ClientID %>").val("0");
+            $("#<%= ddlDesignation.ClientID %>").val("0");
+            $("#<%= ddlManager.ClientID %>").val("0");
 
-                // DISABLE
-                $("#<%= ddlDept.ClientID %>").prop("disabled", true);
-                $("#<%= ddlDesignation.ClientID %>").prop("disabled", true);
-                $("#<%= txtManager.ClientID %>").prop("disabled", true);
+            $("#<%= ddlDept.ClientID %>").prop("disabled", true);
+            $("#<%= ddlDesignation.ClientID %>").prop("disabled", true);
+            $("#<%= ddlManager.ClientID %>").prop("disabled", true);
 
-                $("#<%= hfDeptDisabled.ClientID %>").val("1");
-                $("#<%= hfDesignationDisabled.ClientID %>").val("1");
-            }
-
-            // ===== MANAGER =====
-            else if (roleText === "Manager") {
-
-          
-                $("#<%= ddlDesignation.ClientID %>").val("0");
-                $("#<%= txtManager.ClientID %>").val("");
-
-
-                $("#<%= ddlDesignation.ClientID %>").prop("disabled", true);
-                $("#<%= txtManager.ClientID %>").prop("disabled", true);
-
-                $("#<%= hfDesignationDisabled.ClientID %>").val("1");
-            }
+            $("#<%= hfDeptDisabled.ClientID %>").val("1");
+            $("#<%= hfDesignationDisabled.ClientID %>").val("1");
         }
 
-        $("#<%= ddlRole.ClientID %>").on("change", handleRoleChange);
+        // ===== MANAGER =====
+        else if (roleText === "Manager") {
 
+            $("#<%= ddlDesignation.ClientID %>").val("0");
+            $("#<%= ddlManager.ClientID %>").val("0");
 
-    });
+            $("#<%= ddlDesignation.ClientID %>").prop("disabled", true);
+            $("#<%= ddlManager.ClientID %>").prop("disabled", true);
+
+            $("#<%= hfDesignationDisabled.ClientID %>").val("1");
+        }
+    }
+
+    $("#<%= ddlRole.ClientID %>").on("change", handleRoleChange);
+});
     </script>
+
 
 
 
@@ -87,9 +81,10 @@
     $("#<%= txtEmail.ClientID %>").val("");
     $("#<%= txtDOJ.ClientID %>").val("");
     $("#<%= txtDOB.ClientID %>").val("");
-    $("#<%= txtManager.ClientID %>").val("");
+    $("#<%= ddlManager.ClientID %>").val("0");
 
-          $("#<%= ddlRole.ClientID %>").val("0").trigger("change");
+
+    $("#<%= ddlRole.ClientID %>").val("0").trigger("change");
     $("#<%= ddlDept.ClientID %>").val("0");
     $("#<%= ddlDesignation.ClientID %>").val("0");
     $("#<%= ddlStatus.ClientID %>").val("Active");
@@ -195,6 +190,7 @@
     <asp:BoundField DataField="eDOB" HeaderText="DOB"
         DataFormatString="{0:yyyy-MM-dd}" />
     <asp:BoundField DataField="eManager" HeaderText="Manager" />
+
     <asp:BoundField DataField="eStatus" HeaderText="Status" />
 
        <asp:TemplateField HeaderText="Action">
@@ -295,10 +291,11 @@ UseSubmitBehavior="false"
         <asp:DropDownList ID="ddlDesignation" runat="server" CssClass="form-control" />
     </div>
 
-    <div class="form-group">
-        <label>Manager</label>
-        <asp:TextBox ID="txtManager" runat="server" CssClass="form-control" />
-    </div>
+   <div class="form-group">
+    <label>Manager</label>
+    <asp:DropDownList ID="ddlManager" runat="server" CssClass="form-control" />
+</div>
+
 
     <div class="form-group">
         <label>Status</label>

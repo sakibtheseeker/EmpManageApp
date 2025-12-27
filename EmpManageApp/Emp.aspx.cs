@@ -16,15 +16,17 @@ namespace EmpManageApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["username"] == null)
+            if (Session["role"] == null)
             {
                 Response.Redirect("Login.aspx");
+                return;
             }
             if (!IsPostBack)
             {
                 LoadGrid();
                 LoadRoleDropdown();
                 LoadDeptDropdown();
+                LoadManagerDropdown();
             }
                 
         }
@@ -122,9 +124,12 @@ namespace EmpManageApp
             }
 
 
-            string eManager = txtManager.Enabled
-                ? txtManager.Text.Trim()
-                : null;
+            object eManager =
+            ddlManager.Enabled &&
+            ddlManager.SelectedValue != "0"
+                ? (object)ddlManager.SelectedItem.Text
+                : DBNull.Value;
+
 
             int eid = string.IsNullOrEmpty(hfEmpId.Value)
                       ? 0
@@ -179,31 +184,7 @@ namespace EmpManageApp
                     cmd.Parameters.AddWithValue("@eid", eid);
                 }
 
-                cmd.Parameters.AddWithValue(
-                     "@eDept",
-                     ddlDept.Enabled
-                     && ddlDept.SelectedValue != "0"
-                     && int.TryParse(ddlDept.SelectedValue, out _)
-                         ? (object)ddlDept.SelectedValue
-                         : DBNull.Value
-                 );
 
-
-                cmd.Parameters.AddWithValue(
-                    "@eDesignation",
-                    ddlDesignation.Enabled
-                    && ddlDesignation.SelectedValue != "0"
-                    && int.TryParse(ddlDesignation.SelectedValue, out _)
-                        ? (object)ddlDesignation.SelectedValue
-                        : DBNull.Value
-                );
-
-                cmd.Parameters.AddWithValue(
-                    "@eManager",
-                    txtManager.Enabled && !string.IsNullOrWhiteSpace(txtManager.Text)
-                        ? (object)txtManager.Text.Trim()
-                        : DBNull.Value
-                );
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@eName", eName);
@@ -212,7 +193,19 @@ namespace EmpManageApp
                 cmd.Parameters.AddWithValue("@eDOJ", eDOJ);
                 cmd.Parameters.AddWithValue("@eDOB", eDOB);
                 cmd.Parameters.AddWithValue("@eRole", eRole);
+                cmd.Parameters.AddWithValue("@eDept",
+                    ddlDept.Enabled && ddlDept.SelectedValue != "0"
+                        ? (object)ddlDept.SelectedValue
+                        : DBNull.Value
+                );
+                cmd.Parameters.AddWithValue("@eDesignation",
+                    ddlDesignation.Enabled && ddlDesignation.SelectedValue != "0"
+                        ? (object)ddlDesignation.SelectedValue
+                        : DBNull.Value
+                );
+                cmd.Parameters.AddWithValue("@eManager", eManager); // ✅ ONCE
                 cmd.Parameters.AddWithValue("@eStatus", eStatus);
+
 
                 con.Open();
                 cmd.ExecuteNonQuery();
@@ -227,7 +220,7 @@ namespace EmpManageApp
             {
                 eDesignation1 = Convert.ToInt32(ddlDesignation.SelectedValue);
             }
-            string eManager1 = txtManager.Enabled ? txtManager.Text : null;
+          
 
   
             hfEmpId.Value = "";
@@ -298,67 +291,61 @@ namespace EmpManageApp
                     txtEmail.Text = dr["eEmail"].ToString();
                     txtDOJ.Text = Convert.ToDateTime(dr["eDOJ"]).ToString("yyyy-MM-dd");
                     txtDOB.Text = Convert.ToDateTime(dr["eDOB"]).ToString("yyyy-MM-dd");
-                    txtManager.Text = dr["eManager"].ToString();
+
                     ddlStatus.SelectedValue = dr["eStatus"].ToString();
 
                     // ===== ROLE =====
                     string roleVal = dr["eRole"].ToString();
-                    if (ddlRole.Items.FindByValue(roleVal) != null)
-                    {
-                        ddlRole.SelectedValue = roleVal;
-                    }
-                    else
-                    {
-                        ddlRole.SelectedIndex = 0; 
-                    }
-
+                    ddlRole.SelectedValue = ddlRole.Items.FindByValue(roleVal) != null
+                        ? roleVal
+                        : "0";
 
                     // ===== DEPARTMENT =====
                     if (dr["eDept"] != DBNull.Value)
                     {
                         string deptVal = dr["eDept"].ToString();
-
-                        if (ddlDept.Items.FindByValue(deptVal) != null)
-                        {
-                            ddlDept.SelectedValue = deptVal;
-
-                          
-                            LoadDesignationByDept(Convert.ToInt32(deptVal));
-
-                        }
+                        ddlDept.SelectedValue = deptVal;
+                        LoadDesignationByDept(Convert.ToInt32(deptVal));
                     }
                     else
                     {
                         ddlDept.SelectedIndex = 0;
                     }
 
-
                     // ===== DESIGNATION =====
                     if (dr["eDesignation"] != DBNull.Value)
                     {
                         string desigVal = dr["eDesignation"].ToString();
-
-                        if (ddlDesignation.Items.FindByValue(desigVal) != null)
-                        {
-                            ddlDesignation.SelectedValue = desigVal;
-                        }
+                        ddlDesignation.SelectedValue =
+                            ddlDesignation.Items.FindByValue(desigVal) != null
+                                ? desigVal
+                                : "0";
                     }
                     else
                     {
                         ddlDesignation.SelectedIndex = 0;
                     }
 
-
-
                     // ===== MANAGER =====
-                    txtManager.Text = dr["eManager"] == DBNull.Value
+                    string managerName = dr["eManager"] == DBNull.Value
                         ? ""
                         : dr["eManager"].ToString();
 
-                   
+                    if (!string.IsNullOrEmpty(managerName))
+                    {
+                        ListItem item = ddlManager.Items.FindByText(managerName);
+                        ddlManager.SelectedIndex = item != null
+                            ? ddlManager.Items.IndexOf(item)
+                            : 0;
+                    }
+                    else
+                    {
+                        ddlManager.SelectedIndex = 0;
+                    }
                 }
             }
         }
+
 
         protected void btnDelete_Click(object sender, EventArgs e)
         {
@@ -387,56 +374,69 @@ namespace EmpManageApp
             txtEmail.Text = "";
             txtDOJ.Text = "";
             txtDOB.Text = "";
-            txtManager.Text = "";
 
+            ddlManager.SelectedIndex = 0;
             ddlRole.SelectedIndex = 0;
             ddlDept.SelectedIndex = 0;
             ddlDesignation.SelectedIndex = 0;
             ddlStatus.SelectedIndex = 0;
         }
 
-     
+
         protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
             GridViewRow row = GridView1.Rows[e.RowIndex];
-
             int eid = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
 
-            string eName = ((TextBox)row.Cells[1].Controls[0]).Text.Replace("'", "''");
-            TextBox txtContact = (TextBox)row.FindControl("txtContact");
-            string eContact = txtContact.Text;
-            string eEmail = ((TextBox)row.Cells[3].Controls[0]).Text.Replace("'", "''");
-            string eDOJ = ((TextBox)row.Cells[4].Controls[0]).Text;
-            string eDOB = ((TextBox)row.Cells[5].Controls[0]).Text;
-            TextBox txtManager =(TextBox)row.FindControl("txtEditManager");
-
-            string eManager = txtManager.Text.Replace("'", "''");
-
-            DropDownList ddlStatus =(DropDownList)row.FindControl("ddlEditStatus");
-
-            string eStatus = ddlStatus.SelectedValue;
-
-
-            string q = $@"
-            exec UpdateEmp
-            {eid},
-            '{eName}','{eContact}','{eEmail}',
-            '{eDOJ}','{eDOB}',
-            {ddlRole.SelectedValue},
-            {ddlDept.SelectedValue},
-            {ddlDesignation.SelectedValue},
-            '{eManager}','{eStatus}'
-            ";
+            string eName = ((TextBox)row.Cells[1].Controls[0]).Text;
+            string eContact = ((TextBox)row.FindControl("txtContact")).Text;
+            string eEmail = ((TextBox)row.Cells[3].Controls[0]).Text;
+            DateTime eDOJ = Convert.ToDateTime(((TextBox)row.Cells[4].Controls[0]).Text);
+            DateTime eDOB = Convert.ToDateTime(((TextBox)row.Cells[5].Controls[0]).Text);
+            string eManager = ddlManager.SelectedItem.Text;
+            string eStatus = ((DropDownList)row.FindControl("ddlEditStatus")).SelectedValue;
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                SqlCommand cmd = new SqlCommand(q, con);
+                SqlCommand cmd = new SqlCommand("UpdateEmp", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@eid", eid);
+                cmd.Parameters.AddWithValue("@eName", eName);
+                cmd.Parameters.AddWithValue("@eContact", eContact);
+                cmd.Parameters.AddWithValue("@eEmail", eEmail);
+                cmd.Parameters.AddWithValue("@eDOJ", eDOJ);
+                cmd.Parameters.AddWithValue("@eDOB", eDOB);
+                cmd.Parameters.AddWithValue("@eRole", ddlRole.SelectedValue);
+                cmd.Parameters.AddWithValue("@eDept", ddlDept.SelectedValue);
+                cmd.Parameters.AddWithValue("@eDesignation", ddlDesignation.SelectedValue);
+                cmd.Parameters.AddWithValue("@eManager", eManager);
+                cmd.Parameters.AddWithValue("@eStatus", eStatus);
+
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
 
             GridView1.EditIndex = -1;
             LoadGrid();
+        }
+
+
+        private void LoadManagerDropdown()
+        {
+            using (SqlConnection con = new SqlConnection(connStr))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("FetchManagers", con);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                ddlManager.DataSource = dt;
+                ddlManager.DataTextField = "eName";
+                ddlManager.DataValueField = "eid";
+                ddlManager.DataBind();
+            }
+
+            ddlManager.Items.Insert(0, new ListItem("-- Select Manager --", "0"));
         }
 
         private void LoadDesignationByDept(int deptId)
