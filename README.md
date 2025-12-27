@@ -1,8 +1,3 @@
-Absolutely 👍
-Below is a **professional, recruiter-ready README** for your **EmpManageApp**.
-You can **copy–paste this directly** into `EmpManageApp/README.md` and adjust screenshots later.
-
----
 
 # 🧑‍💼 EmpManageApp
 
