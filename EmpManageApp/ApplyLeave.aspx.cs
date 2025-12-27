@@ -95,6 +95,7 @@ namespace EmpManageApp
 
         void LoadLeaveBadges()
         {
+
             leaveBadges.InnerHtml = ""; // clear old badges
 
             using (SqlConnection con = new SqlConnection(connStr))
@@ -414,7 +415,7 @@ namespace EmpManageApp
 
             int leaveDays = CalculateWorkingDays(fromDate, toDate);
 
-            
+
 
             // 🔹 Step 2: Refund correct number of days
             using (SqlConnection con = new SqlConnection(connStr))
@@ -481,24 +482,66 @@ namespace EmpManageApp
                 "$('#leaveModal').modal('show');", true);
         }
 
+        protected void gvLeave_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType != DataControlRowType.DataRow) return;
 
+            string status = DataBinder.Eval(e.Row.DataItem, "status").ToString();
+
+            var badge = (System.Web.UI.HtmlControls.HtmlGenericControl)
+                e.Row.FindControl("statusBadge");
+
+            if (badge == null) return;
+
+            if (status == "Pending")
+                badge.InnerHtml = "<span class='badge badge-warning'>Pending</span>";
+            else if (status == "Approved")
+                badge.InnerHtml = "<span class='badge badge-success'>Approved</span>";
+            else if (status == "Rejected")
+                badge.InnerHtml = "<span class='badge badge-danger'>Rejected</span>";
+        }
+
+      
+
+       
+
+        private int GetColumnIndex(string headerText)
+        {
+            foreach (DataControlField col in gvLeave.Columns)
+            {
+                if (col.HeaderText == headerText)
+                    return gvLeave.Columns.IndexOf(col);
+            }
+            return -1;
+        }
 
         void LoadGrid()
         {
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                SqlCommand cmd = new SqlCommand(
-                    "SELECT l.leaveId, lt.leaveTypeName, l.fromDate, l.toDate, l.reason, l.status " +
-                    "FROM EmpLeave l JOIN LeaveType lt ON l.leaveTypeId = lt.leaveTypeId " +
-                    "WHERE empId=@empId", con);
+                SqlCommand cmd = new SqlCommand(@"
+            SELECT 
+                l.leaveId,
+                lt.leaveTypeName,
+                l.fromDate,
+                l.toDate,
+                l.reason,
+                l.status,
+                l.rejectionReason
+            FROM EmpLeave l
+            JOIN LeaveType lt ON l.leaveTypeId = lt.leaveTypeId
+            WHERE l.empId = @empId
+            ORDER BY l.appliedOn DESC", con);
 
-                cmd.Parameters.AddWithValue("@empId", Session["empId"]);
+                cmd.Parameters.AddWithValue("@empId", EmpId);
 
                 con.Open();
                 gvLeave.DataSource = cmd.ExecuteReader();
                 gvLeave.DataBind();
             }
         }
+
+       
 
 
         void ClearForm()

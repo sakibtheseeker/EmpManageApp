@@ -10,6 +10,13 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+    <style>
+    .badge {
+        font-size: 90%;
+        padding: 6px 10px;
+    }
+</style>
+
 </head>
 <body>
 
@@ -63,6 +70,7 @@
                  <a class="dropdown-item" href="LeaveType.aspx">Leave Type</a>
                  <a class="dropdown-item" href="AddLeave.aspx">Add Leave</a>
                    <a class="dropdown-item" href="ApplyLeave.aspx">Apply Leave</a>
+                    <a class="dropdown-item" href="ApproveLeave.aspx">Approve Leave</a>
                    </div>
                 </li>
 
@@ -73,6 +81,7 @@
 
 <asp:HiddenField ID="hfLeaveId" runat="server" />
 
+
 <div class="container mt-4">
  
 
@@ -82,11 +91,13 @@
     <h4>Apply Leave</h4>
 
     <!-- GRID -->
-    <asp:GridView ID="gvLeave"
-        runat="server"
-        CssClass="table table-bordered"
-        AutoGenerateColumns="false"
-        DataKeyNames="leaveId">
+<asp:GridView ID="gvLeave"
+    runat="server"
+    CssClass="table table-bordered"
+    AutoGenerateColumns="false"
+    DataKeyNames="leaveId"
+    OnRowDataBound="gvLeave_RowDataBound">
+
 
         <Columns>
             <asp:BoundField DataField="leaveTypeName" HeaderText="Leave Type" />
@@ -95,24 +106,43 @@
             <asp:BoundField DataField="toDate" HeaderText="To Date"
                 DataFormatString="{0:dd-MM-yyyy}" />
             <asp:BoundField DataField="reason" HeaderText="Reason" />
-            <asp:BoundField DataField="status" HeaderText="Status" />
-
-            <asp:TemplateField HeaderText="Action">
+            <asp:TemplateField HeaderText="Status">
                 <ItemTemplate>
-                    <asp:LinkButton runat="server"
-                        Text="Edit"
-                        CssClass="btn btn-sm btn-warning"
-                        CommandArgument='<%# Eval("leaveId") %>'
-                        OnClick="btnEdit_Click" />
-
-                         <asp:LinkButton runat="server"
-                            Text="Delete"
-                            CssClass="btn btn-sm btn-danger"
-                            CommandArgument='<%# Eval("leaveId") %>'
-                            OnClick="btnDelete_Click"
-                            OnClientClick="return confirm('Are you sure you want to delete this leave?');" />
+                    <span runat="server" id="statusBadge"></span>
                 </ItemTemplate>
             </asp:TemplateField>
+
+
+            <asp:TemplateField HeaderText="Action">
+    <ItemTemplate>
+        <asp:LinkButton runat="server"
+            Text="Edit"
+            CssClass="btn btn-sm btn-warning"
+            CommandArgument='<%# Eval("leaveId") %>'
+            OnClick="btnEdit_Click"
+            Visible='<%# Eval("status").ToString() == "Pending" %>' />
+
+        <asp:LinkButton runat="server"
+            Text="Delete"
+            CssClass="btn btn-sm btn-danger ml-1"
+            CommandArgument='<%# Eval("leaveId") %>'
+            OnClick="btnDelete_Click"
+            OnClientClick="return confirm('Are you sure?');"
+            Visible='<%# Eval("status").ToString() == "Pending" %>' />
+    </ItemTemplate>
+</asp:TemplateField>
+
+
+        
+        <asp:TemplateField HeaderText="Rejection Reason" HeaderStyle-CssClass="reject-col" >
+            <ItemTemplate>
+                <asp:Label runat="server"
+                    CssClass="text-danger"
+                    Text='<%# Eval("rejectionReason") %>' />
+            </ItemTemplate>
+       </asp:TemplateField>
+
+
         </Columns>
     </asp:GridView>
 
