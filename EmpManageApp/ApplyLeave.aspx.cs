@@ -15,21 +15,16 @@ namespace EmpManageApp
         int EmpId => Convert.ToInt32(Session["empId"]);
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["role"] == null)
+            if (Session["role"] == null || Session["role"].ToString() != "Employee")
             {
                 Response.Redirect("Login.aspx");
-                return;
-            }
-
-            if (Session["role"].ToString() == "Admin")
-            {
-                Response.Redirect("Dept.aspx");
                 return;
             }
 
             if (!IsPostBack)
             {
                 // ✅ SAFE TO CALL ALWAYS
+                SetNavbarByRole();
                 EnsureLeaveBalance();
                 LoadLeaveTypes();
                 LoadLeaveBadges();
@@ -39,6 +34,60 @@ namespace EmpManageApp
 
         }
 
+        private void SetNavbarByRole()
+        {
+            string role = Session["role"].ToString();
+
+            // Hide everything first
+            liDept.Visible = false;
+            liDesignation.Visible = false;
+            liRole.Visible = false;
+            liEmp.Visible = false;
+            liEvent.Visible = false;
+
+            liLeaveType.Visible = false;
+            liAddLeave.Visible = false;
+            liApplyLeave.Visible = false;
+            liApproveLeave.Visible = false;
+            liLogout.Visible = Session["role"] != null;
+
+            // ADMIN
+            if (role == "Admin")
+            {
+                liDept.Visible = true;
+                liDesignation.Visible = true;
+                liRole.Visible = true;
+                liEmp.Visible = true;
+                liEvent.Visible = true;
+                liLeaveType.Visible = true;
+                liAddLeave.Visible = true;
+            }
+
+            // EMPLOYEE
+            else if (role == "Employee")
+            {
+                liApplyLeave.Visible = true;
+            }
+
+            // MANAGER
+            else if (role == "Manager")
+            {
+                liApproveLeave.Visible = true;
+            }
+        }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            // Clear all session data
+            Session.Clear();
+            Session.Abandon();
+
+            // Extra safety: prevent back navigation
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.Cache.SetNoStore();
+
+            Response.Redirect("Login.aspx");
+        }
 
         /* CREATE BALANCE IF NOT EXISTS */
         void EnsureLeaveBalance()

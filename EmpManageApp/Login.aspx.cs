@@ -29,19 +29,22 @@ namespace EmpManageApp
                     Session["role"] = dr["role"].ToString();
                     Session["empId"] = dr["empId"] == DBNull.Value ? null : dr["empId"];
 
-                    // ROLE BASED REDIRECTION
                     string role = dr["role"].ToString();
 
                     if (role == "Admin")
+                    {
                         Response.Redirect("Dept.aspx");
-                    else
+                    }
+                    else if (role == "Manager")
+                    {
+                        Response.Redirect("ApproveLeave.aspx");
+                    }
+                    else if (role == "Employee")
+                    {
                         Response.Redirect("ApplyLeave.aspx");
+                    }
                 }
-                else
-                {
-                    lblError.Text = "Invalid login";
-                    lblError.Visible = true;
-                }
+
             }
         }
 

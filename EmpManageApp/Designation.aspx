@@ -15,7 +15,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 
 <body>
-          <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+          
+<form id="form2" runat="server">
+              <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
         <a class="navbar-brand" href="Emp.aspx">EmpManage</a>
 
@@ -29,50 +31,76 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+                 <ul class="navbar-nav ml-auto">
 
-                <li class="nav-item">
-                    <a class="nav-link" href="Dept.aspx">Department</a>
-                </li>
+    <!-- ADMIN MENU -->
+    <li class="nav-item" runat="server" id="liDept">
+        <a class="nav-link" href="Dept.aspx">Department</a>
+    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link active" href="Designation.aspx">Designation</a>
-                </li>
+    <li class="nav-item" runat="server" id="liDesignation">
+        <a class="nav-link" href="Designation.aspx">Designation</a>
+    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link " href="Role.aspx">Role</a>
-                </li>
+    <li class="nav-item" runat="server" id="liRole">
+        <a class="nav-link" href="Role.aspx">Role</a>
+    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="Emp.aspx">Employee</a>
-                </li>
+    <li class="nav-item" runat="server" id="liEmp">
+        <a class="nav-link" href="Emp.aspx">Employee</a>
+    </li>
 
-             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Event
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="EventType.aspx">Event Type</a>
-                  <a class="dropdown-item" href="EventCalender.aspx">Event Calender</a>
-                    </div>
-                  </li>
+    <!-- EVENT (ADMIN) -->
+    <li class="nav-item dropdown" runat="server" id="liEvent">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+            Event
+        </a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="EventType.aspx">Event Type</a>
+            <a class="dropdown-item" href="EventCalender.aspx">Event Calender</a>
+        </div>
+    </li>
 
-                   <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Leave
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="LeaveType.aspx">Leave Type</a>
-                    <a class="dropdown-item" href="AddLeave.aspx">Add Leave</a>
-                      </div>
-                   </li>
+    <!-- LEAVE MENU -->
+    <li class="nav-item dropdown" runat="server" id="liLeave">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+            Leave
+        </a>
+        <div class="dropdown-menu">
 
-            </ul>
+            <a class="dropdown-item" runat="server" id="liLeaveType" href="LeaveType.aspx">
+                Leave Type
+            </a>
+
+            <a class="dropdown-item" runat="server" id="liAddLeave" href="AddLeave.aspx">
+                Add Leave
+            </a>
+
+            <a class="dropdown-item" runat="server" id="liApplyLeave" href="ApplyLeave.aspx">
+                Apply Leave
+            </a>
+
+            <a class="dropdown-item" runat="server" id="liApproveLeave" href="ApproveLeave.aspx">
+                Approve Leave
+            </a>
+
+        </div>
+    </li>
+     <li class="nav-item" runat="server" id="liLogout">
+    <asp:LinkButton
+        ID="btnLogout"
+        runat="server"
+        CssClass="nav-link text-white"
+        OnClick="btnLogout_Click">
+        Logout
+    </asp:LinkButton>
+</li>
+
+
+</ul>
         </div>
     </div>
 </nav>
-<form id="form2" runat="server">
-
     <div class="container mt-3">
         <h4>Designation</h4>
 

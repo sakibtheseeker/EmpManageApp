@@ -69,6 +69,7 @@
   <ItemGroup>
     <Content Include="AddLeave.aspx" />
     <Content Include="ApplyLeave.aspx" />
+    <Content Include="ApproveLeave.aspx" />
     <Content Include="Dept.aspx" />
     <Content Include="Designation.aspx" />
     <Content Include="Emp.aspx" />
@@ -93,6 +94,13 @@
     </Compile>
     <Compile Include="ApplyLeave.aspx.designer.cs">
       <DependentUpon>ApplyLeave.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ApproveLeave.aspx.cs">
+      <DependentUpon>ApproveLeave.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ApproveLeave.aspx.designer.cs">
+      <DependentUpon>ApproveLeave.aspx</DependentUpon>
     </Compile>
     <Compile Include="Dept.aspx.cs">
       <DependentUpon>Dept.aspx</DependentUpon>
