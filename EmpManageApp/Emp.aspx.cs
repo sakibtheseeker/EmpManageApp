@@ -30,7 +30,12 @@ namespace EmpManageApp
                 LoadDeptDropdown();
                 LoadManagerDropdown();
             }
-                
+            
+            else
+            {
+                EnforceRoleRules(); // ✅ CRITICAL
+            }
+
         }
 
         private void SetNavbarByRole()
@@ -167,6 +172,17 @@ namespace EmpManageApp
         protected void btnSave_Click(object sender, EventArgs e)
         {
             int eRole = Convert.ToInt32(ddlRole.SelectedValue);
+            // Determine role
+            string roleName = ddlRole.SelectedItem.Text;
+
+            // Manager should NEVER have a manager
+            object eManager = DBNull.Value;
+
+            if (roleName != "Manager" && ddlManager.SelectedValue != "0")
+            {
+                eManager = ddlManager.SelectedItem.Text;
+            }
+
 
             int eDept = ddlDept.Enabled
                 ? Convert.ToInt32(ddlDept.SelectedValue)
@@ -178,13 +194,6 @@ namespace EmpManageApp
             {
                 eDesignation = desig;
             }
-
-
-            object eManager =
-            ddlManager.Enabled &&
-            ddlManager.SelectedValue != "0"
-                ? (object)ddlManager.SelectedItem.Text
-                : DBNull.Value;
 
 
             int eid = string.IsNullOrEmpty(hfEmpId.Value)
@@ -281,6 +290,7 @@ namespace EmpManageApp
   
             hfEmpId.Value = "";
             LoadGrid();
+            LoadManagerDropdown();
             ClearForm();
         }
 
@@ -310,13 +320,77 @@ namespace EmpManageApp
                 "$('#deptModal').modal('show');",
                 true);
         }
+        private void EnforceRoleRules()
+        {
+            if (ddlRole.SelectedItem == null) return;
+
+            string role = ddlRole.SelectedItem.Text;
+
+            // RESET ENABLE STATE
+            ddlDept.Enabled = true;
+            ddlDesignation.Enabled = true;
+            ddlManager.Enabled = true;
+
+            // ===== ADMIN =====
+            if (role == "Admin")
+            {
+                ddlDept.Enabled = false;
+                ddlDesignation.Enabled = false;
+                ddlManager.Enabled = false;
+
+                ddlDept.SelectedIndex = 0;
+
+                if (ddlDesignation.Items.Count > 0)
+                    ddlDesignation.SelectedIndex = 0;
+
+                if (ddlManager.Items.Count > 0)
+                    ddlManager.SelectedIndex = 0;
+            }
+
+            // ===== MANAGER =====
+            else if (role == "Manager")
+            {
+                ddlDept.Enabled = true;
+                ddlDesignation.Enabled = false;
+                ddlManager.Enabled = false;
+
+                // SAFE resets
+                if (ddlDesignation.Items.Count > 0)
+                    ddlDesignation.SelectedIndex = 0;
+
+                if (ddlManager.Items.Count > 0)
+                    ddlManager.SelectedIndex = 0;
+            }
+
+            // ===== EMPLOYEE =====
+            else if (role == "Employee")
+            {
+                ddlDept.Enabled = true;
+                ddlDesignation.Enabled = true;
+                ddlManager.Enabled = true;
+            }
+        }
+
+
         protected void ddlDept_SelectedIndexChanged(object sender, EventArgs e)
         {
             int deptId = Convert.ToInt32(ddlDept.SelectedValue);
 
-            LoadDesignationByDept(deptId);
+            ddlDesignation.Items.Clear();
 
-       
+            // Only EMPLOYEE needs designation
+            if (ddlRole.SelectedItem.Text == "Employee" && deptId > 0)
+            {
+                LoadDesignationByDept(deptId);
+            }
+            else
+            {
+                ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
+            }
+
+            // 🔐 CRITICAL: always enforce role rules
+            EnforceRoleRules();
+
             ScriptManager.RegisterStartupScript(
                 this,
                 GetType(),
@@ -325,8 +399,6 @@ namespace EmpManageApp
                 true
             );
         }
-
-
 
         private void LoadEmployeeForEdit(int eid)
         {
@@ -356,31 +428,42 @@ namespace EmpManageApp
                         ? roleVal
                         : "0";
 
-                    // ===== DEPARTMENT =====
+                    /// ===== DEPARTMENT =====
                     if (dr["eDept"] != DBNull.Value)
                     {
                         string deptVal = dr["eDept"].ToString();
                         ddlDept.SelectedValue = deptVal;
+
+                        // 🔑 IMPORTANT: load designation list FIRST
                         LoadDesignationByDept(Convert.ToInt32(deptVal));
                     }
                     else
                     {
                         ddlDept.SelectedIndex = 0;
+                        ddlDesignation.Items.Clear();
+                        ddlDesignation.Items.Insert(0, new ListItem("-- Select Designation --", "0"));
                     }
 
                     // ===== DESIGNATION =====
                     if (dr["eDesignation"] != DBNull.Value)
                     {
                         string desigVal = dr["eDesignation"].ToString();
-                        ddlDesignation.SelectedValue =
-                            ddlDesignation.Items.FindByValue(desigVal) != null
-                                ? desigVal
-                                : "0";
+
+                        // ✅ SAFE assignment
+                        if (ddlDesignation.Items.FindByValue(desigVal) != null)
+                        {
+                            ddlDesignation.SelectedValue = desigVal;
+                        }
+                        else
+                        {
+                            ddlDesignation.SelectedIndex = 0;
+                        }
                     }
                     else
                     {
                         ddlDesignation.SelectedIndex = 0;
                     }
+
 
                     // ===== MANAGER =====
                     string managerName = dr["eManager"] == DBNull.Value
@@ -400,8 +483,9 @@ namespace EmpManageApp
                     }
                 }
             }
-        }
+            EnforceRoleRules();
 
+        }
 
         protected void btnDelete_Click(object sender, EventArgs e)
         {
