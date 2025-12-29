@@ -18,7 +18,7 @@ namespace EmpManageApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // 🔐 EMPLOYEE ONLY
+           
             if (Session["role"] == null || Session["role"].ToString() != "Employee")
             {
                 Response.Redirect("Login.aspx");
@@ -76,7 +76,7 @@ namespace EmpManageApp
         {
             string role = Session["role"].ToString();
 
-            // Hide all first
+       
             liDept.Visible = false;
             liDesignation.Visible = false;
             liRole.Visible = false;
@@ -94,7 +94,7 @@ namespace EmpManageApp
 
             liLogout.Visible = true;
 
-            // ✅ EMPLOYEE: can view documents
+    
             if (role == "Employee")
             {
                 liApplyLeave.Visible = true;
@@ -125,11 +125,11 @@ namespace EmpManageApp
 
         protected void btnLogout_Click(object sender, EventArgs e)
         {
-            // Clear all session data
+           
             Session.Clear();
             Session.Abandon();
 
-            // Extra safety: prevent back navigation
+         
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetNoStore();
 

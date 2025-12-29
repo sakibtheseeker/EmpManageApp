@@ -5,13 +5,20 @@
 <head runat="server">
     <title>Role</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" />
-</head>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" />
 
+<!-- jQuery FIRST -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper SECOND -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+
+<!-- Bootstrap JS LAST -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+    
+</head>
 <body>
   
 <form id="form2" runat="server">
@@ -44,9 +51,35 @@
         <a class="nav-link" href="Role.aspx">Role</a>
     </li>
 
-    <li class="nav-item" runat="server" id="liEmp">
-        <a class="nav-link" href="Emp.aspx">Employee</a>
-    </li>
+   <li class="nav-item dropdown" runat="server" id="liEmp">
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       id="employeeDropdown"
+       role="button"
+       data-toggle="dropdown"
+       aria-haspopup="true"
+       aria-expanded="false">
+        Employee
+    </a>
+
+    <div class="dropdown-menu dropdown-menu-right"
+         aria-labelledby="employeeDropdown">
+
+        <!-- Add Employee -->
+        <a class="dropdown-item"
+           href="Emp.aspx">
+            Add / Manage Employee
+        </a>
+
+        <!-- Create Login -->
+        <a class="dropdown-item"
+           href="AdminSignup.aspx">
+            Create Employee Login
+        </a>
+
+    </div>
+</li>
+
 
     <!-- EVENT (ADMIN) -->
     <li class="nav-item dropdown" runat="server" id="liEvent">
@@ -214,9 +247,6 @@
     </div>
 
 </form>
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 
 </body>
 </html>

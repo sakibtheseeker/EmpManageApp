@@ -31,9 +31,7 @@ namespace EmpManageApp
         }
         private void SetNavbarByRole()
         {
-            string role = Session["role"].ToString();
-
-            // Hide everything first
+            // Hide all first
             liDept.Visible = false;
             liDesignation.Visible = false;
             liRole.Visible = false;
@@ -44,32 +42,20 @@ namespace EmpManageApp
             liAddLeave.Visible = false;
             liApplyLeave.Visible = false;
             liApproveLeave.Visible = false;
-            liLogout.Visible = Session["role"] != null;
 
-            // ADMIN
-            if (role == "Admin")
-            {
-                liDept.Visible = true;
-                liDesignation.Visible = true;
-                liRole.Visible = true;
-                liEmp.Visible = true;
-                liEvent.Visible = true;
-                liLeaveType.Visible = true;
-                liAddLeave.Visible = true;
-            }
+            liLogout.Visible = true;
 
-            // EMPLOYEE
-            else if (role == "Employee")
-            {
-                liApplyLeave.Visible = true;
-            }
+            // Only ADMIN is allowed here anyway
+            liDept.Visible = true;
+            liDesignation.Visible = true;
+            liRole.Visible = true;
+            liEmp.Visible = true;
+            liEvent.Visible = true;
 
-            // MANAGER
-            else if (role == "Manager")
-            {
-                liApproveLeave.Visible = true;
-            }
+            liLeaveType.Visible = true;
+            liAddLeave.Visible = true;
         }
+
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             // Clear all session data
