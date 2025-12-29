@@ -44,9 +44,6 @@ namespace EmpManageApp
             liApplyLeave.Visible = false;
             liApproveLeave.Visible = false;
 
-            liDocuments.Visible = false;
-            liAddDocument.Visible = false;
-            liViewDocuments.Visible = false;
 
             liLogout.Visible = true;
 
@@ -56,10 +53,6 @@ namespace EmpManageApp
             if (role == "Manager")
             {
                 liApproveLeave.Visible = true;
-
-                liDocuments.Visible = true;
-                liViewDocuments.Visible = true;   // ✅ manager can VIEW
-                                                  // ❌ AddDocument stays hidden
             }
         }
 

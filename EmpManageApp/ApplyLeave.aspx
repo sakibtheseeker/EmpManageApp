@@ -89,7 +89,25 @@
             </a>
 
         </div>
-    </li>
+        </li>
+
+     <!-- DOCUMENTS MENU -->
+<li class="nav-item dropdown" runat="server" id="liDocuments">
+    <a class="nav-link dropdown-toggle" href="#"
+       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Documents
+    </a>
+
+    <div class="dropdown-menu">
+        <a class="dropdown-item"
+           runat="server"
+           id="liViewDocuments"
+           href="ViewDocuments.aspx">
+            View Documents
+        </a>
+    </div>
+</li>
+
      <li class="nav-item" runat="server" id="liLogout">
     <asp:LinkButton
         ID="btnLogout"

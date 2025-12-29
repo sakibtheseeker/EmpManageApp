@@ -49,6 +49,11 @@ namespace EmpManageApp
             liAddLeave.Visible = false;
             liApplyLeave.Visible = false;
             liApproveLeave.Visible = false;
+
+            liDocuments.Visible = false;
+
+            liViewDocuments.Visible = false;
+
             liLogout.Visible = Session["role"] != null;
 
             // ADMIN
@@ -59,22 +64,35 @@ namespace EmpManageApp
                 liRole.Visible = true;
                 liEmp.Visible = true;
                 liEvent.Visible = true;
+
                 liLeaveType.Visible = true;
                 liAddLeave.Visible = true;
+
+                // Admin can ADD document
+                liDocuments.Visible = true;
+             
             }
 
             // EMPLOYEE
             else if (role == "Employee")
             {
                 liApplyLeave.Visible = true;
+
+                // Employee can VIEW documents
+                liDocuments.Visible = true;
+                liViewDocuments.Visible = true;
             }
 
             // MANAGER
             else if (role == "Manager")
             {
                 liApproveLeave.Visible = true;
+
+                // ❌ Manager should NOT see documents
+                // (intentionally left blank)
             }
         }
+
 
         protected void btnLogout_Click(object sender, EventArgs e)
         {
@@ -589,8 +607,6 @@ namespace EmpManageApp
                 gvLeave.DataBind();
             }
         }
-
-       
 
 
         void ClearForm()

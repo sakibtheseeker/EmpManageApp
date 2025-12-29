@@ -18,12 +18,13 @@ namespace EmpManageApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // 🔐 MANAGER ONLY
-            if (Session["role"] == null || Session["role"].ToString() != "Manager")
+            // 🔐 EMPLOYEE ONLY
+            if (Session["role"] == null || Session["role"].ToString() != "Employee")
             {
                 Response.Redirect("Login.aspx");
                 return;
             }
+
 
             if (!IsPostBack)
             {
@@ -37,8 +38,12 @@ namespace EmpManageApp
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 SqlDataAdapter da =
-                    new SqlDataAdapter("FetchEmpDocuments", con);
+                    new SqlDataAdapter("FetchEmpDocumentsByEmp", con);
+
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                da.SelectCommand.Parameters.AddWithValue(
+                    "@empId", Convert.ToInt32(Session["empId"])
+                );
 
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -47,6 +52,7 @@ namespace EmpManageApp
                 gvDocuments.DataBind();
             }
         }
+
 
         protected void btnDownload_Click(object sender, EventArgs e)
         {
@@ -70,7 +76,7 @@ namespace EmpManageApp
         {
             string role = Session["role"].ToString();
 
-            // Hide everything first
+            // Hide all first
             liDept.Visible = false;
             liDesignation.Visible = false;
             liRole.Visible = false;
@@ -81,20 +87,41 @@ namespace EmpManageApp
             liAddLeave.Visible = false;
             liApplyLeave.Visible = false;
             liApproveLeave.Visible = false;
+
             liAddDocument.Visible = false;
             liViewDocuments.Visible = false;
+            liDocuments.Visible = false;
 
             liLogout.Visible = true;
 
-            // MANAGER
-            if (role == "Manager")
+            // ✅ EMPLOYEE: can view documents
+            if (role == "Employee")
             {
-                liApproveLeave.Visible = true;
+                liApplyLeave.Visible = true;
                 liDocuments.Visible = true;
                 liViewDocuments.Visible = true;
             }
+
+            else if (role == "Manager")
+            {
+                liApproveLeave.Visible = true;
+            }
+
+            else if (role == "Admin")
+            {
+                liDept.Visible = true;
+                liDesignation.Visible = true;
+                liRole.Visible = true;
+                liEmp.Visible = true;
+                liEvent.Visible = true;
+                liLeaveType.Visible = true;
+                liAddLeave.Visible = true;
+                liDocuments.Visible = true;
+                liAddDocument.Visible = true;
+            }
         }
-        
+
+
 
         protected void btnLogout_Click(object sender, EventArgs e)
         {
