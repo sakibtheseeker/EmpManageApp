@@ -122,21 +122,47 @@ namespace EmpManageApp
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-        int deptid = Convert.ToInt32(ddlDept.SelectedValue);
-        string deName = txtDesignation.Text.Replace("'", "''");
-        string destatus = ddlStatus.SelectedValue;
+            int deptId = Convert.ToInt32(ddlDept.SelectedValue);
+            string deName = txtDesignation.Text.Trim();
+            string deStatus = ddlStatus.SelectedValue;
 
+            if (deptId == 0 || string.IsNullOrWhiteSpace(deName))
+                return;
 
-    if (deptid == 0 || string.IsNullOrWhiteSpace(deName))
-    {
-       
-        return;
-    }
+            int count = 0;
 
-            string q = $"exec InsertDesignation {deptid} ,'{deName}','{destatus}'";
+            // 🔍 CHECK DUPLICATE (Dept + Designation)
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                SqlCommand cmd = new SqlCommand(q, con);
+                SqlCommand cmd = new SqlCommand(@"
+            SELECT COUNT(*) 
+            FROM Designation 
+            WHERE deptId = @deptId AND deName = @deName", con);
+
+                cmd.Parameters.AddWithValue("@deptId", deptId);
+                cmd.Parameters.AddWithValue("@deName", deName);
+
+                con.Open();
+                count = (int)cmd.ExecuteScalar();
+            }
+
+            if (count > 0)
+            {
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(), "dup",
+                    "alert('Designation already exists for this department');", true);
+                return;
+            }
+
+            // ✅ INSERT
+            using (SqlConnection con = new SqlConnection(connStr))
+            {
+                SqlCommand cmd = new SqlCommand("InsertDesignation", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@deptId", deptId);
+                cmd.Parameters.AddWithValue("@deName", deName);
+                cmd.Parameters.AddWithValue("@deStatus", deStatus);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
@@ -144,11 +170,11 @@ namespace EmpManageApp
 
             LoadGrid();
 
-       
             ddlDept.SelectedIndex = 0;
             txtDesignation.Text = "";
             ddlStatus.SelectedIndex = 0;
         }
+
 
 
 

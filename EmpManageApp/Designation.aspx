@@ -126,7 +126,7 @@
             HeaderText="ID" ReadOnly="true" />
 
         <asp:BoundField DataField="deName"
-            HeaderText="Department Name" />
+            HeaderText="Designation Name" />
 
         <asp:BoundField DataField="destatus"
             HeaderText="Status" />

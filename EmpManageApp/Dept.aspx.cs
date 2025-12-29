@@ -99,22 +99,51 @@ namespace EmpManageApp
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            string deptName = txtDeptName.Text.Replace("'", "''");
-            string deptstatus = ddlStatus.SelectedValue;
+            string deptName = txtDeptName.Text.Trim();
+            string deptStatus = ddlStatus.SelectedValue;
 
-            string q = $"exec InsertDept {deptName} ,'{deptstatus}'";
+            if (string.IsNullOrWhiteSpace(deptName))
+                return;
+
+            int count = 0;
+
+            // 🔍 CHECK DUPLICATE
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                SqlCommand cmd = new SqlCommand(q, con);
+                SqlCommand cmd = new SqlCommand(@"
+            SELECT COUNT(*) 
+            FROM Dept 
+            WHERE deptName = @deptName", con);
+
+                cmd.Parameters.AddWithValue("@deptName", deptName);
+
+                con.Open();
+                count = (int)cmd.ExecuteScalar();
+            }
+
+            if (count > 0)
+            {
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(), "dup",
+                    "alert('Department already exists');", true);
+                return;
+            }
+
+            // ✅ INSERT
+            using (SqlConnection con = new SqlConnection(connStr))
+            {
+                SqlCommand cmd = new SqlCommand("InsertDept", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@deptName", deptName);
+                cmd.Parameters.AddWithValue("@deptStatus", deptStatus);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
 
-           
             LoadGrid();
 
-        
             txtDeptName.Text = "";
             ddlStatus.SelectedIndex = 0;
         }

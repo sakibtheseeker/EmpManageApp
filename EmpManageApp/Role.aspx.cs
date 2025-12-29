@@ -130,42 +130,53 @@ namespace EmpManageApp
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            string rName = txtRole.Text.Replace("'", "''");
-            string rstatus = ddlStatus.SelectedValue;
-            int count;
-            string q = $"select * from Role where rname='{rName}'";
+            string rName = txtRole.Text.Trim();
+            string rStatus = ddlStatus.SelectedValue;
+
+            if (string.IsNullOrEmpty(rName))
+                return;
+
+            int count = 0;
+
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                SqlCommand cmd = new SqlCommand(q, con);
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT COUNT(*) FROM Role WHERE rName = @rName", con);
+
+                cmd.Parameters.AddWithValue("@rName", rName);
+
+                con.Open();
+                count = (int)cmd.ExecuteScalar();
+            }
+
+            if (count > 0)
+            {
+                // ❌ Duplicate
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(), "dup",
+                    "alert('Role already exists');", true);
+                return;
+            }
+
+            // ✅ Insert
+            using (SqlConnection con = new SqlConnection(connStr))
+            {
+                SqlCommand cmd = new SqlCommand(
+                    "InsertRole", con);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@rName", rName);
+                cmd.Parameters.AddWithValue("@rStatus", rStatus);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
-                count = Convert.ToInt32(cmd.ExecuteScalar());
             }
 
-            if (count<=0)
-            {
-                string qu = $"exec InsertRole '{rName}','{rstatus}'";
-                using (SqlConnection con = new SqlConnection(connStr))
-                {
-                    SqlCommand cmd = new SqlCommand(qu, con);
-
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            else
-            {
-                Response.Write("Duplicate role inserted");
-            }
-
-                LoadGrid();
-
-       
-         
+            LoadGrid();
             txtRole.Text = "";
             ddlStatus.SelectedIndex = 0;
         }
+
 
         protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
