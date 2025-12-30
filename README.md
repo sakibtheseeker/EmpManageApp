@@ -1,167 +1,241 @@
+---
 
-# 🧑‍💼 EmpManageApp
+# HRDesk – Employee Management System
 
-**Employee Management System (ASP.NET Web Forms)**
+HRDesk is a **role-based Employee Management System** built using **ASP.NET Web Forms** and **SQL Server**.
+It is designed to help organizations manage employees, departments, roles, leaves, events, documents, and login access in a structured and secure manner.
 
-EmpManageApp is a **web-based employee management system** designed to manage employees, departments, roles, and leave workflows efficiently.
-The application focuses on **backend logic, role-based access control, and database-driven operations** using **ASP.NET and SQL Server**.
+This project demonstrates **real-world HR workflows**, **clean role separation**, and **database-driven logic**, making it ideal for **academic submission**, **portfolio**, and **job interviews**.
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
 
-### 👤 Employee Module
+### 👥 Role-Based Access Control
 
-* Employee creation and management
-* Role-based access (Admin / Employee)
-* Department and designation mapping
+HRDesk supports three user roles:
 
-### 🏢 Department & Role Management
+* **Admin**
+* **Manager**
+* **Employee**
 
-* Add / update departments
-* Assign roles dynamically
-* Active / inactive state handling
-
-### 🗓️ Leave Management
-
-* Apply leave with date validation
-* Leave approval / rejection by Admin
-* Rejection reason support
-* Leave status tracking (Pending / Approved / Rejected)
-
-### 📊 Leave Balance
-
-* Automatic leave balance creation per employee
-* Prevents negative leave balance
-* Leave usage calculation based on approvals
-
-### 🔐 Authentication & Authorization
-
-* Session-based authentication
-* Admin and Employee access segregation
-* Unauthorized access protection
+Each role has **strictly controlled access** to pages and actions.
 
 ---
 
-## 🛠️ Tech Stack
+### 🔐 Authentication & Login
 
-| Layer       | Technology                              |
-| ----------- | --------------------------------------- |
-| Frontend    | ASP.NET Web Forms, HTML, CSS, Bootstrap |
-| Backend     | C# (.NET Framework)                     |
-| Database    | SQL Server                              |
-| Data Access | ADO.NET                                 |
-| UI Styling  | Bootstrap 4                             |
-
----
-
-## 🗂️ Database Design
-
-### Main Tables
-
-* `Emp`
-* `Dept`
-* `Role`
-* `LeaveType`
-* `EmpLeave`
-* `EmpLeaveBalance`
-* `DeptLeave`
-
-### Key Constraints
-
-* Foreign keys for referential integrity
-* Unique constraints on employee-leave mapping
-* Date validation using CHECK constraints
-* Triggers for leave balance handling
+* Separate **Employee Login** and **Admin Login**
+* Admin login handled via a dedicated `AdminLogin.aspx`
+* Employees cannot self-register
+* Admin creates employee login credentials
+* Login credentials are **emailed via SMTP**
+* Session-based authentication with role validation
 
 ---
 
-## 📸 Screenshots (Add Later)
+### 🧑‍💼 Employee Management (Admin)
 
-> Recommended screenshots to add:
+* Add, edit, soft-delete employees
+* Assign:
 
-* Login Page
-* Employee Dashboard
-* Leave Application Page
-* Admin Leave Approval Page
+  * Role
+  * Department
+  * Designation
+  * Manager
+* Enforced business rules:
 
-```md
-![Login Page](screenshots/login.png)
-![Leave Approval](screenshots/leave-approval.png)
+  * Admin → No department/designation/manager
+  * Manager → Department allowed, no manager/designation
+  * Employee → Full assignment
+* Prevents invalid role combinations
+
+---
+
+### 🏢 Department & Designation Management
+
+* Add / update / soft-delete departments
+* Add designations mapped to departments
+* Prevents duplicate department/designation entries
+* Dropdowns dynamically load based on department selection
+
+---
+
+### 🧾 Role Management
+
+* Add, update, soft-delete roles
+* Prevent duplicate roles (e.g., only one “Admin”)
+* Used consistently across the system
+
+---
+
+### 📆 Leave Management
+
+**Employee**
+
+* Apply leave
+* Edit or delete pending leave
+* View leave balance badges
+* Overlap and balance validations
+
+**Manager**
+
+* Approve / Reject employee leaves
+* Add rejection reason
+* Leaves filtered by reporting manager
+
+**Admin**
+
+* Define leave types
+* Configure department-wise leave limits
+
+---
+
+### 📅 Event Management
+
+* Create event types (with color coding)
+* Create and manage event calendar
+* Soft delete supported
+* Clean separation of Event Type and Event Calendar
+
+---
+
+### 📂 Document Management
+
+* Upload employee documents
+* Store files in structured folders
+* View documents in browser (new tab)
+* Download documents securely
+* Employees can only view **their own documents**
+* Managers and admins restricted as per rules
+
+---
+
+### ✉️ Email Integration (SMTP)
+
+* Automatic email sent when:
+
+  * Admin creates login credentials
+* Includes:
+
+  * Username
+  * Password
+* Built using `System.Net.Mail` with Gmail SMTP
+
+---
+
+## 🧱 Project Structure
+
+```text
+HRDesk (EmpManageApp)
+│
+├── AddDocument.aspx              # Upload employee documents
+├── ViewDocuments.aspx            # View & download documents
+│
+├── Login.aspx                    # Employee login
+├── AdminLogin.aspx               # Admin-only login
+├── AdminSignup.aspx              # Admin creates employee login
+│
+├── Emp.aspx                      # Employee management (Admin)
+├── Dept.aspx                     # Department management
+├── Designation.aspx              # Designation management
+├── Role.aspx                     # Role management
+│
+├── LeaveType.aspx                # Leave types (Admin)
+├── AddLeave.aspx                 # Department leave allocation
+├── ApplyLeave.aspx               # Employee applies leave
+├── ApproveLeave.aspx             # Manager approves leave
+│
+├── EventType.aspx                # Event type management
+├── EventCalender.aspx            # Event calendar
+│
+├── Employee Documents/           # Uploaded documents storage
+│
+├── packages.config               # NuGet packages
+└── Web.config                    # Connection strings & SMTP config
 ```
 
 ---
 
-## ⚙️ How to Run Locally
+## 🗄️ Database Overview
 
-### Prerequisites
+**Key Tables**
 
-* Visual Studio (2019 or later)
-* SQL Server + SSMS
-* .NET Framework installed
+* `Emp`
+* `Login`
+* `Dept`
+* `Designation`
+* `Role`
+* `LeaveType`
+* `DeptLeave`
+* `EmpLeave`
+* `EmpLeaveBalance`
+* `EventType`
+* `EventCalendar`
+* `EmpDocument`
 
-### Steps
+**Design Principles**
 
-1. Clone the repository
-
-   ```bash
-   git clone https://github.com/sakibtheseeker/EmpManageApp.git
-   ```
-
-2. Open the `.sln` file in Visual Studio
-
-3. Restore database
-
-   * Execute SQL scripts from `/Database` folder
-   * Update connection string in `Web.config`
-
-4. Run the project
-
-   * Press `Ctrl + F5` or click **Start**
+* Soft delete using `isActive`
+* Strong foreign key relationships
+* Unique constraints for data integrity
+* Stored procedures for all operations
 
 ---
 
-## 🔐 Default Roles
+## 🧠 Technical Highlights
 
-| Role     | Access                       |
-| -------- | ---------------------------- |
-| Admin    | Full control, leave approval |
-| Employee | Apply leave, view status     |
-
----
-
-## 📌 Learning Outcomes
-
-* Practical understanding of **ASP.NET Web Forms**
-* Real-world **CRUD operations**
-* SQL constraints and joins
-* Session handling & role-based authorization
-* Debugging runtime exceptions (NullReference, DataBinding issues)
+* ASP.NET Web Forms (Code-Behind pattern)
+* SQL Server Stored Procedures
+* Bootstrap 4 UI
+* jQuery for dynamic behavior
+* Session-based authentication
+* Server-side validation + business rules
+* Modular and scalable architecture
 
 ---
 
-## 🚧 Future Enhancements
+## 🔐 Security Practices
 
-* Convert to ASP.NET MVC
-* API-based backend
-* Angular frontend integration
-* Email notifications
+* Role-based page access checks
+* No direct employee signup
+* Admin-controlled login creation
+* Document access restricted by employee ID
+* Soft delete instead of destructive delete
+* Prevents duplicate and invalid records
+
+---
+
+## 🎯 Use Case Flow
+
+1. **Admin logs in**
+2. Creates departments, roles, designations
+3. Adds employees
+4. Creates employee login credentials
+5. Credentials emailed to employee
+6. Employee logs in → applies leave, views documents
+7. Manager logs in → approves/rejects leaves
+
+---
+
+## 📌 Future Enhancements
+
+* Password hashing (BCrypt)
+* Change password feature
 * Dashboard analytics
+* Role-based document visibility
+* Audit logs
+* API layer (Web API)
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Developed By
 
 **Sakib Tamboli**
-📧 Email: [sakibtamboliwork@gmail.com](mailto:sakibtamboliwork@gmail.com)
-🌐 Portfolio: [https://sakib-tamboli.netlify.app](https://sakib-tamboli.netlify.app)
-🔗 GitHub: [https://github.com/sakibtheseeker](https://github.com/sakibtheseeker)
+
+* 📍 India
+* 🎓 BSc IT
+* 💻 ASP.NET | SQL Server | Web Forms
+* 🚀 Actively building real-world projects
 
 ---
-
-## ⭐ If you like this project
-
-Give it a ⭐ on GitHub — it motivates me to build more!
-
----
-
