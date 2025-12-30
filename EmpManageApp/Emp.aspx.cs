@@ -157,7 +157,7 @@ namespace EmpManageApp
         {
             int eid = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
 
-            string q = $"exec SoftDeleteEmp {eid}";
+            string q = $"exec SoftDeleteEmpWithLogin {eid}";
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 SqlCommand cmd = new SqlCommand(q, con);
@@ -492,7 +492,7 @@ namespace EmpManageApp
             LinkButton btn = (LinkButton)sender;
             int eid = Convert.ToInt32(btn.CommandArgument);
 
-            string q = "exec DeleteEmp @eid";
+            string q = "exec SoftDeleteEmpWithLogin  @eid";
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
