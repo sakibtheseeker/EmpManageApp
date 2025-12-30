@@ -23,8 +23,42 @@ namespace EmpManageApp
 
             if (!IsPostBack)
             {
+                SetNavbarByRole();
                 LoadEmployeesWithoutLogin();
             }
+
+        }
+
+        private void SetNavbarByRole()
+        {
+            string role = Session["role"].ToString();
+
+            // Hide everything first
+            liDept.Visible = false;
+            liDesignation.Visible = false;
+            liRole.Visible = false;
+            liEmp.Visible = false;
+            liEvent.Visible = false;
+
+            liLeaveType.Visible = false;
+            liAddLeave.Visible = false;
+            liViewDocuments.Visible = false;
+            liLogout.Visible = Session["role"] != null;
+
+            // ADMIN
+            if (role == "Admin")
+            {
+                liDept.Visible = true;
+                liDesignation.Visible = true;
+                liRole.Visible = true;
+                liEmp.Visible = true;
+                liEvent.Visible = true;
+                liLeaveType.Visible = true;
+                liAddLeave.Visible = true;
+                liAddDocument.Visible = true;
+            }
+
+           
         }
 
         private void LoadEmployeesWithoutLogin()

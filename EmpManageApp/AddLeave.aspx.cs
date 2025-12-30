@@ -42,7 +42,7 @@ namespace EmpManageApp
             liAddLeave.Visible = false;
             liApplyLeave.Visible = false;
             liApproveLeave.Visible = false;
-
+            liViewDocuments.Visible = false;
             liLogout.Visible = true;
 
             // Only ADMIN is allowed here anyway
@@ -54,6 +54,7 @@ namespace EmpManageApp
 
             liLeaveType.Visible = true;
             liAddLeave.Visible = true;
+            liAddDocument.Visible = true;
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)

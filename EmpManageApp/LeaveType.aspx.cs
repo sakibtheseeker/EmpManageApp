@@ -57,12 +57,16 @@ namespace EmpManageApp
                 liEvent.Visible = true;
                 liLeaveType.Visible = true;
                 liAddLeave.Visible = true;
+                liAddDocument.Visible = true;
+                liViewDocuments.Visible = false;
             }
 
             // EMPLOYEE
             else if (role == "Employee")
             {
                 liApplyLeave.Visible = true;
+                liDocuments.Visible = true;
+                liViewDocuments.Visible = true;
             }
 
             // MANAGER

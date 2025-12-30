@@ -46,6 +46,8 @@ namespace EmpManageApp
             liAddLeave.Visible = false;
             liApplyLeave.Visible = false;
             liApproveLeave.Visible = false;
+            liViewDocuments.Visible = false;
+
             liLogout.Visible = Session["role"] != null;
 
             // ADMIN
@@ -58,12 +60,15 @@ namespace EmpManageApp
                 liEvent.Visible = true;
                 liLeaveType.Visible = true;
                 liAddLeave.Visible = true;
+                liAddDocument.Visible = true;
             }
 
             // EMPLOYEE
             else if (role == "Employee")
             {
                 liApplyLeave.Visible = true;
+                liDocuments.Visible = true;
+                liViewDocuments.Visible = true;
             }
 
             // MANAGER
